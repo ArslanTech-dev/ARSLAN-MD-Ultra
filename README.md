@@ -16,7 +16,9 @@
 ![Issues](https://img.shields.io/github/issues/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=red)
 ![Last Commit](https://img.shields.io/github/last-commit/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=brightgreen)
 
-<img src="https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif" width="280"/>
+<div align="center">
+<img src="https://files.catbox.moe/0w1hu5.jpg" width="500" style="border-radius:20px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);"/>
+</div>
 
 </div>
 
