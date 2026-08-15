@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARSLAN MD • Pairing System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0f;
+            color: #00ffc8;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(0,255,200,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .container {
+            background: rgba(0, 20, 20, 0.8);
+            backdrop-filter: blur(12px);
+            border: 2px solid #00ffc8;
+            border-radius: 24px;
+            padding: 3rem 4rem;
+            max-width: 700px;
+            width: 90%;
+            box-shadow: 0 0 60px rgba(0, 255, 200, 0.15);
+            animation: fadeIn 1s ease-out;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,255,200,0.2);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #00ffc8;
+            text-shadow: 0 0 20px rgba(0,255,200,0.4);
+        }
+        .header .status {
+            background: rgba(0,255,200,0.1);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: 1px solid #00ffc8;
+            font-size: 0.8rem;
+            color: #00ffc8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .header .status .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ffc8;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        .sys-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            background: rgba(0,255,200,0.05);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0,255,200,0.1);
+        }
+        .sys-info .item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #88ddcc;
+        }
+        .sys-info .item .label { color: #446666; }
+        .sys-info .item .value { color: #00ffc8; font-weight: bold; }
+        .nodes {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin: 1.5rem 0 2rem 0;
+        }
+        .nodes .node {
+            background: rgba(0,255,200,0.06);
+            border: 1px solid rgba(0,255,200,0.15);
+            border-radius: 8px;
+            padding: 0.4rem 0;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #88ddcc;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .nodes .node.active {
+            background: rgba(0,255,200,0.15);
+            border-color: #00ffc8;
+            color: #00ffc8;
+            box-shadow: 0 0 20px rgba(0,255,200,0.1);
+        }
+        .pair-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        .pair-form label {
+            font-size: 0.9rem;
+            color: #88ddcc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .pair-form .input-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .pair-form input {
+            flex: 1;
+            background: #0d1a1a;
+            border: 2px solid #1a3a3a;
+            border-radius: 12px;
+            padding: 0.9rem 1.2rem;
+            color: #00ffc8;
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: 0.3s;
+        }
+        .pair-form input:focus {
+            border-color: #00ffc8;
+            box-shadow: 0 0 30px rgba(0,255,200,0.1);
+        }
+        .pair-form button {
+            background: #00ffc8;
+            color: #0a0a0f;
+            border: none;
+            border-radius: 12px;
+            padding: 0.9rem 2.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+        .pair-form button:hover {
+            background: #00ddaa;
+            box-shadow: 0 0 40px rgba(0,255,200,0.3);
+            transform: scale(1.02);
+        }
+        .pair-form button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 1.8rem;
+            background: rgba(0,255,200,0.05);
+            border: 1px solid rgba(0,255,200,0.1);
+            border-radius: 16px;
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #00ffc8;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .result.error {
+            color: #ff4477;
+            border-color: #ff4477;
+        }
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #335555;
+            letter-spacing: 2px;
+            border-top: 1px solid rgba(0,255,200,0.05);
+            padding-top: 1.5rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        @media (max-width: 600px) {
+            .container { padding: 2rem 1.5rem; }
+            .header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .header h1 { font-size: 1.6rem; }
+            .sys-info { grid-template-columns: 1fr; }
+            .nodes { grid-template-columns: repeat(4, 1fr); }
+            .pair-form .input-group { flex-direction: column; }
+            .pair-form button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✦ ARSLAN MD</h1>
+            <div class="status"><span class="dot"></span> SYSTEM ONLINE</div>
+        </div>
+        <div class="sys-info">
+            <div class="item"><span class="label">NODES</span><span class="value">25</span></div>
+            <div class="item"><span class="label">VIP ACCESS</span><span class="value">ACTIVE</span></div>
+            <div class="item"><span class="label">CORE</span><span class="value">K-MD_CORE.SYS</span></div>
+            <div class="item"><span class="label">CONNECTED</span><span class="value">SVR_1</span></div>
+        </div>
+        <div class="nodes" id="nodes"></div>
+        <div class="pair-form">
+            <label for="phone">📱 Enter your WhatsApp number</label>
+            <div class="input-group">
+                <input type="text" id="phone" placeholder="923xxxxxxxxx" value="923" />
+                <button id="pairBtn">✦ Pair Now</button>
+            </div>
+        </div>
+        <div class="result" id="result">Enter your number and click "Pair Now"</div>
+        <div class="footer">© 2026 ARSLAN TECH'S • Powered by Baileys</div>
+    </div>
+    <script>
+        const nodesContainer = document.getElementById('nodes');
+        for (let i = 1; i <= 25; i++) {
+            const node = document.createElement('div');
+            node.className = 'node' + (i === 1 ? ' active' : '');
+            node.textContent = `SVR_${i}`;
+            nodesContainer.appendChild(node);
+        }
+        const phoneInput = document.getElementById('phone');
+        const pairBtn = document.getElementById('pairBtn');
+        const resultDiv = document.getElementById('result');
+
+        pairBtn.addEventListener('click', async () => {
+            const phone = phoneInput.value.trim();
+            if (!phone || phone.length < 10) {
+                resultDiv.textContent = '❌ Please enter a valid phone number (e.g., 923xxxxxxxxx)';
+                resultDiv.className = 'result error';
+                return;
+            }
+            pairBtn.disabled = true;
+            pairBtn.textContent = '⏳ Requesting...';
+            resultDiv.textContent = '⏳ Connecting to server...';
+            resultDiv.className = 'result';
+            try {
+                const response = await fetch('/pair', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                const data = await response.json();
+                if (data.success && data.code) {
+                    resultDiv.textContent = `✅ Your pairing code: ${data.code}`;
+                    resultDiv.className = 'result';
+                } else {
+                    resultDiv.textContent = `❌ Error: ${data.error || 'Unknown error'}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (err) {
+                resultDiv.textContent = `❌ Network error: ${err.message}`;
+                resultDiv.className = 'result error';
+            } finally {
+                pairBtn.disabled = false;
+                pairBtn.textContent = '✦ Pair Now';
+            }
+        });
+    </script>
+</body>
+</html>
