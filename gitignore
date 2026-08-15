@@ -5,3 +5,4 @@ session/
 config.local.js
 .DS_Store
 Thumbs.db
+data/
