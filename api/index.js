@@ -1,0 +1,20 @@
+// api/index.js 
+module.exports = {
+    weather: require('./weather'),
+    crypto: require('./crypto'),
+    news: require('./news'),
+    lyrics: require('./lyrics'),
+    translate: require('./translate'),
+    joke: require('./joke'),
+    fact: require('./fact'),
+    anime: require('./anime'),
+    movie: require('./movie'),
+    quote: require('./quote'),
+    reddit: require('./reddit'),
+    meme: require('./meme'),
+    aiimage: require('./aiimage'),
+    tts: require('./tts'),
+    urban: require('./urban'),
+    wikipedia: require('./wikipedia'),
+    github: require('./github'),
+};
