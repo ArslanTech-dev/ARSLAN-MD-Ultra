@@ -1,0 +1,17 @@
+run = "node index.js"
+language = "nodejs"
+
+[nix]
+channel = "stable"
+
+[env]
+NODE_VERSION = "18"
+
+[packager]
+language = "nodejs"
+[packager.features]
+packageSearch = true
+guessImports = true
+
+[deployment]
+run = ["node", "index.js"]
