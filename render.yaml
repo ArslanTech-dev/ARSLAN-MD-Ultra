@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: arslan-md-ultra
+    runtime: node
+    repo: https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: PAIRING_NUMBER
+        sync: false
+      - key: OWNER
+        sync: false
+      - key: MONGODB_URI
+        sync: false
