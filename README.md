@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=slice&color=0:000000,100:00ff41&height=220&section=header&text=ARSLAN-MD-ULTRA&fontSize=55&fontColor=00ff41&animation=twinkling&fontAlignY=38&desc=%3C%20SYSTEM%20BREACHED%20%7C%20WHATSAPP%20AUTOMATION%20ONLINE%20%3E&descAlignY=62&descAlign=50&descSize=18" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=slice&color=0:000000,100:00ff41&height=250&section=header&text=ARSLAN-MD-ULTRA&fontSize=60&fontColor=00ff41&animation=twinkling&fontAlignY=35&desc=%3C%20SYSTEM%20BREACHED%20%7C%20WHATSAPP%20AUTOMATION%20ONLINE%20%3E&descAlignY=55&descAlign=50&descSize=18" width="100%"/>
 
-<img src="https://readme-typing-svg.demolab.com/?lines=%3E+Initializing+ARSLAN-MD-ULTRA...;%3E+Access+Granted+%E2%9C%93;%3E+Loading+Modules+%5B%23%23%23%23%23%23%23%23%23%23%5D+100%25;%3E+WhatsApp+Multi-Device+Core+Online;%3E+Powered+by+ARSLAN+TECH%27S+%F0%9F%92%80&font=Fira+Code&center=true&width=750&height=50&color=00FF41&vCenter=true&size=22&pause=900&background=000000"/>
+<img src="https://readme-typing-svg.demolab.com/?lines=%3E+Booting+ARSLAN-MD-ULTRA...;%3E+Access+Granted+%E2%9C%93;%3E+Decrypting+Modules+%5B%23%23%23%23%23%23%23%23%23%23%5D+100%25;%3E+WhatsApp+Multi-Device+Core+Online;%3E+Firewall+Bypassed+%F0%9F%94%93;%3E+Powered+by+ARSLAN+TECH%27S+%F0%9F%92%80&font=Fira+Code&center=true&width=780&height=50&color=00FF41&vCenter=true&size=22&pause=800&background=000000"/>
 
 <br/>
 
@@ -10,20 +10,30 @@
 
 <br/><br/>
 
+<img src="https://media.giphy.com/media/L8K62iTDkzGX6/giphy.gif" width="100%" height="4"/>
+
+<br/>
+
 ![Made with Love](https://img.shields.io/badge/Made%20With-%E2%9D%A4%EF%B8%8F-black?style=for-the-badge&labelColor=000000)
 ![Node.js](https://img.shields.io/badge/Node.js-Powered-00ff41?style=for-the-badge&logo=node.js&logoColor=black&labelColor=000000)
 ![WhatsApp](https://img.shields.io/badge/WhatsApp-Multi--Device-00ff41?style=for-the-badge&logo=whatsapp&logoColor=black&labelColor=000000)
 ![License](https://img.shields.io/badge/License-MIT-00ff41?style=for-the-badge&labelColor=000000)
 ![Status](https://img.shields.io/badge/STATUS-ONLINE-00ff41?style=for-the-badge&labelColor=000000)
+![Uptime](https://img.shields.io/badge/UPTIME-24%2F7-00ff41?style=for-the-badge&labelColor=000000)
 
 ![Stars](https://img.shields.io/github/stars/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
 ![Forks](https://img.shields.io/github/forks/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
 ![Issues](https://img.shields.io/github/issues/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
 ![Last Commit](https://img.shields.io/github/last-commit/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
+![Repo Size](https://img.shields.io/github/repo-size/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
 
 <img src="https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake-dark.svg" width="600"/>
 
 <img src="https://media.giphy.com/media/2jjWFxHNKaqNS/giphy.gif" width="420"/>
+
+<br/>
+
+<img src="https://readme-typing-svg.demolab.com/?lines=%F0%9F%92%BB+root%40arslan-tech%3A~%24+./launch_bot.sh;%F0%9F%9B%B0%EF%B8%8F+Establishing+secure+tunnel...;%E2%9C%85+Connection+stable+%7C+Latency%3A+12ms&font=Fira+Code&center=true&width=780&height=40&color=00FF41&vCenter=true&size=16&pause=1200&background=000000&repeat=true"/>
 
 </div>
 
@@ -37,6 +47,9 @@ root@arslan-tech:~$ whoami
 
 root@arslan-tech:~$ status
 > ⚡ Fast   🛡️ Stable   🧩 Modular   🔥 Feature-Packed
+
+root@arslan-tech:~$ uptime
+> 99.9% | Auto-healing enabled | PM2 process guard active
 ```
 
 **ARSLAN-MD-ULTRA** 🖥️ is a powerful, blazing-fast, and feature-rich **WhatsApp Multi-Device Bot** built with Node.js — engineered like a proper hacking toolkit: modular, clean, and built to run silent and smooth in the background. No fluff, just raw automation power. 💚
@@ -67,6 +80,23 @@ root@arslan-tech:~$ status
 
 <div align="center">
 <img src="https://media.giphy.com/media/SFgpkFcO0oo9dujiJd/giphy.gif" width="440"/>
+</div>
+
+---
+
+## 📈 System Performance
+
+<div align="center">
+
+```
+CPU LOAD     [■■■□□□□□□□] 30%
+MEMORY       [■■■■□□□□□□] 40%
+UPTIME       [■■■■■■■■■■] 99.9%
+RESPONSE     [■■■■■■■■■□] < 100ms
+```
+
+<img src="https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif" width="380"/>
+
 </div>
 
 ---
@@ -116,6 +146,10 @@ npm install
 npm start
 ```
 
+<div align="center">
+<img src="https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif" width="420"/>
+</div>
+
 ### 🔓 Authentication Protocol
 
 1. Run the bot using `node pair.js` or `npm start` 🖥️
@@ -135,6 +169,8 @@ npm start
 <div align="center">
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra)
+
+<img src="https://media.giphy.com/media/W6ievEbAcbY3ymTX2M/giphy.gif" width="320"/>
 
 </div>
 
@@ -165,12 +201,20 @@ root@arslan-tech:~/plugins$ pm2 restart all
 3. Follow the existing plugin structure
 4. Restart the bot — new command live instantly 💥
 
+<div align="center">
+<img src="https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif" width="380"/>
+</div>
+
 ---
 
 ## 🖼️ Preview
 
 <div align="center">
 <img src="https://media.giphy.com/media/26ufp2gpMpqbcJZWo/giphy.gif" width="480"/>
+
+<br/><br/>
+
+<img src="https://media.giphy.com/media/QNFhOolVeCzPQ2Mx85/giphy.gif" width="480"/>
 </div>
 
 ---
@@ -179,7 +223,13 @@ root@arslan-tech:~/plugins$ pm2 restart all
 
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api/pin/?username=ArslanTech-dev&repo=ARSLAN-MD-Ultra&theme=chartreuse-dark" width="400"/>
+<img src="https://github-readme-stats.vercel.app/api/pin/?username=ArslanTech-dev&repo=ARSLAN-MD-Ultra&theme=chartreuse-dark" width="420"/>
+
+<br/>
+
+<img src="https://github-readme-stats.vercel.app/api?username=ArslanTech-dev&show_icons=true&theme=chartreuse-dark&hide_border=true&count_private=true" width="420"/>
+
+<img src="https://streak-stats.demolab.com/?user=ArslanTech-dev&theme=chartreuse-dark&hide_border=true" width="420"/>
 
 </div>
 
@@ -194,6 +244,10 @@ Contributions, issues, and feature requests are always welcome! 🙌
 3. 💾 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
 5. 🔃 Open a Pull Request
+
+<div align="center">
+<img src="https://media.giphy.com/media/f9k1tV7HyORcngKF8v/giphy.gif" width="320"/>
+</div>
 
 ---
 
@@ -223,6 +277,10 @@ root@arslan-tech:~$ contact --info
 > 📱 +92 308 4991001
 > 🔗 github.com/ArslanTech-dev
 ```
+
+[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:arslanchkpt@gmail.com)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/923084991001)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ArslanTech-dev)
 
 <img src="https://media.giphy.com/media/xUOxfjsMlI9bLvpiQU/giphy.gif" width="150"/>
 
