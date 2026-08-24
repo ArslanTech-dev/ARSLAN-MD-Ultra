@@ -1,0 +1,43 @@
+{
+  "name": "ARSLAN MD ULTRA",
+  "description": "Ultimate WhatsApp bot with 280+ commands, AI, downloaders, and group management.",
+  "repository": "https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra",
+  "logo": "https://files.catbox.moe/0w1hu5.jpg",
+  "keywords": ["whatsapp", "bot", "baileys", "nodejs", "ai", "automation"],
+  "env": {
+    "PAIRING_NUMBER": {
+      "description": "Your WhatsApp number (without + and without @s.whatsapp.net)",
+      "required": true
+    },
+    "OWNER": {
+      "description": "Your WhatsApp JID (e.g., 923xxxxxxxxx@s.whatsapp.net)",
+      "required": true
+    },
+    "BOT_NAME": {
+      "description": "Name of your bot",
+      "required": false,
+      "value": "ARSLAN MD ULTRA"
+    },
+    "OWNER_NAME": {
+      "description": "Your display name",
+      "required": false,
+      "value": "ARSLAN TECH'S"
+    },
+    "BOT_LOGO": {
+      "description": "URL of bot logo",
+      "required": false,
+      "value": "https://files.catbox.moe/0w1hu5.jpg"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}
