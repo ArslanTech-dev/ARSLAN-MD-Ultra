@@ -5,13 +5,6 @@ const { fancyLog } = require('../utils/logger');
 const fs = require('fs');
 const path = require('path');
 
-// Load core commands
-const funCmds = require('../commands/fun');
-const groupCmds = require('../commands/group');
-const downloadCmds = require('../commands/download');
-const aiCmds = require('../commands/ai');
-const ownerCmds = require('../commands/owner');
-const systemCmds = require('../commands/system');
 
 // ─── PLUGIN LOADER ────────────────────────────
 function loadPlugins() {
