@@ -5,8 +5,7 @@ const { fancyLog } = require('../utils/logger');
 const fs = require('fs');
 const path = require('path');
 
-
-// ─── PLUGIN LOADER ────────────────────────────
+// ─── PLUGIN LOADER (صرف plugins/ فولڈر سے لوڈ کریں) ───
 function loadPlugins() {
     const pluginsDir = path.join(__dirname, '..', 'plugins');
     const pluginCommands = {};
@@ -15,7 +14,6 @@ function loadPlugins() {
         for (const file of files) {
             try {
                 const plugin = require(path.join(pluginsDir, file));
-                // Assume plugin exports an object with command names as keys
                 Object.assign(pluginCommands, plugin);
                 fancyLog('INFO', `Loaded plugin: ${file}`);
             } catch (err) {
@@ -26,18 +24,7 @@ function loadPlugins() {
     return pluginCommands;
 }
 
-// Merge all commands
-const coreCommands = {
-    ...funCmds,
-    ...groupCmds,
-    ...downloadCmds,
-    ...aiCmds,
-    ...ownerCmds,
-    ...systemCmds,
-};
-
-const pluginCommands = loadPlugins();
-const allCommands = { ...coreCommands, ...pluginCommands };
+const allCommands = loadPlugins();
 
 // ─── MESSAGE HANDLER ───────────────────────────
 global.antiDeleteData = new Map();
@@ -83,6 +70,5 @@ module.exports = {
                 await sock.sendMessage(from, { text: `❌ Error: ${err.message}` }, { quoted: msg });
             }
         }
-        // Unknown commands are silently ignored.
     }
 };
