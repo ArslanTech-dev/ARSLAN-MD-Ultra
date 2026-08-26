@@ -5,273 +5,451 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ARSLAN MD • Pairing System</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ───────────── RESET ───────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background: #0a0a0f;
-            color: #00ffc8;
-            font-family: 'Courier New', monospace;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
         }
+
+        /* ───────────── BACKGROUND ANIMATION ───────────── */
         body::before {
             content: '';
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at center, rgba(0,255,200,0.05) 0%, transparent 70%);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 255, 200, 0.05) 0%, transparent 60%),
+                        radial-gradient(circle at 70% 80%, rgba(247, 183, 49, 0.05) 0%, transparent 60%);
             pointer-events: none;
+            animation: pulseBg 6s ease-in-out infinite alternate;
         }
+
+        @keyframes pulseBg {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* ───────────── CONTAINER ───────────── */
         .container {
-            background: rgba(0, 20, 20, 0.8);
-            backdrop-filter: blur(12px);
-            border: 2px solid #00ffc8;
-            border-radius: 24px;
-            padding: 3rem 4rem;
-            max-width: 700px;
+            background: rgba(10, 10, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            border-radius: 32px;
+            padding: 3rem 3.5rem;
+            max-width: 560px;
             width: 90%;
-            box-shadow: 0 0 60px rgba(0, 255, 200, 0.15);
-            animation: fadeIn 1s ease-out;
+            box-shadow: 0 0 80px rgba(0, 255, 200, 0.05), 0 0 30px rgba(247, 183, 49, 0.05);
+            text-align: center;
+            position: relative;
+            animation: fadeUp 1s ease-out;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(0,255,200,0.2);
-            padding-bottom: 1rem;
-            margin-bottom: 1.8rem;
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .header h1 {
+
+        /* ───────────── LOGO ───────────── */
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 0.2rem;
+            display: inline-block;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 200, 0.2); }
+            100% { text-shadow: 0 0 40px rgba(0, 255, 200, 0.6), 0 0 80px rgba(0, 255, 200, 0.2); }
+        }
+
+        .title {
             font-size: 2.2rem;
             font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #00ffc8, #f7b731);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitle {
+            color: #88aacc;
+            font-size: 0.9rem;
             letter-spacing: 4px;
-            color: #00ffc8;
-            text-shadow: 0 0 20px rgba(0,255,200,0.4);
-        }
-        .header .status {
-            background: rgba(0,255,200,0.1);
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            border: 1px solid #00ffc8;
-            font-size: 0.8rem;
-            color: #00ffc8;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            margin-bottom: 1.8rem;
         }
-        .header .status .dot {
+
+        /* ───────────── STATUS ───────────── */
+        .status {
+            display: inline-block;
+            background: rgba(0, 255, 200, 0.08);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            border-radius: 40px;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.75rem;
+            color: #00ffc8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .status .dot {
             display: inline-block;
             width: 10px;
             height: 10px;
             background: #00ffc8;
             border-radius: 50%;
             margin-right: 8px;
-            animation: pulse 1.5s infinite;
+            animation: blink 1.2s infinite;
         }
-        .sys-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            background: rgba(0,255,200,0.05);
-            border-radius: 16px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(0,255,200,0.1);
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
         }
-        .sys-info .item {
+
+        /* ───────────── SERVER SELECTOR ───────────── */
+        .server-selector {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .server-selector label {
+            font-size: 0.8rem;
+            color: #88aacc;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .server-selector select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 255, 200, 0.12);
+            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            color: #fff;
             font-size: 0.9rem;
-            color: #88ddcc;
-        }
-        .sys-info .item .label { color: #446666; }
-        .sys-info .item .value { color: #00ffc8; font-weight: bold; }
-        .nodes {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            margin: 1.5rem 0 2rem 0;
-        }
-        .nodes .node {
-            background: rgba(0,255,200,0.06);
-            border: 1px solid rgba(0,255,200,0.15);
-            border-radius: 8px;
-            padding: 0.4rem 0;
-            text-align: center;
-            font-size: 0.65rem;
-            color: #88ddcc;
-            letter-spacing: 1px;
+            font-family: 'Segoe UI', sans-serif;
+            outline: none;
+            cursor: pointer;
             transition: 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300ffc8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
         }
-        .nodes .node.active {
-            background: rgba(0,255,200,0.15);
+
+        .server-selector select:focus {
             border-color: #00ffc8;
-            color: #00ffc8;
-            box-shadow: 0 0 20px rgba(0,255,200,0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.05);
         }
+
+        .server-selector select option {
+            background: #0a0a0f;
+            color: #fff;
+        }
+
+        .selected-server {
+            font-size: 0.8rem;
+            color: #00ffc8;
+            background: rgba(0, 255, 200, 0.06);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 200, 0.08);
+        }
+
+        /* ───────────── FORM ───────────── */
         .pair-form {
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
-            margin-top: 1.5rem;
+            gap: 1rem;
         }
+
         .pair-form label {
-            font-size: 0.9rem;
-            color: #88ddcc;
+            font-size: 0.85rem;
+            color: #88aacc;
             text-transform: uppercase;
             letter-spacing: 2px;
+            font-weight: 300;
         }
-        .pair-form .input-group {
+
+        .input-group {
             display: flex;
             gap: 0.8rem;
             flex-wrap: wrap;
         }
-        .pair-form input {
+
+        .input-group input {
             flex: 1;
-            background: #0d1a1a;
-            border: 2px solid #1a3a3a;
-            border-radius: 12px;
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             padding: 0.9rem 1.2rem;
-            color: #00ffc8;
+            color: #fff;
             font-size: 1.1rem;
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', sans-serif;
             outline: none;
             transition: 0.3s;
+            text-align: center;
         }
-        .pair-form input:focus {
+
+        .input-group input:focus {
             border-color: #00ffc8;
-            box-shadow: 0 0 30px rgba(0,255,200,0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.05);
         }
-        .pair-form button {
-            background: #00ffc8;
+
+        .input-group input::placeholder {
+            color: #445566;
+            font-size: 0.9rem;
+        }
+
+        .input-group button {
+            background: linear-gradient(135deg, #00ffc8, #00ddaa);
             color: #0a0a0f;
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 0.9rem 2.5rem;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', sans-serif;
+            flex-shrink: 0;
         }
-        .pair-form button:hover {
-            background: #00ddaa;
-            box-shadow: 0 0 40px rgba(0,255,200,0.3);
-            transform: scale(1.02);
+
+        .input-group button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 40px rgba(0, 255, 200, 0.2);
         }
-        .pair-form button:disabled {
-            opacity: 0.5;
+
+        .input-group button:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
         }
+
+        /* ───────────── RESULT ───────────── */
         .result {
             margin-top: 1.8rem;
-            background: rgba(0,255,200,0.05);
-            border: 1px solid rgba(0,255,200,0.1);
-            border-radius: 16px;
             padding: 1.2rem;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #00ffc8;
+            border-radius: 16px;
+            background: rgba(0, 255, 200, 0.03);
+            border: 1px solid rgba(0, 255, 200, 0.06);
             min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00ffc8;
             transition: 0.3s;
+            word-break: break-all;
         }
+
         .result.error {
             color: #ff4477;
-            border-color: #ff4477;
+            border-color: rgba(255, 68, 119, 0.2);
         }
+
+        .result.loading {
+            color: #f7b731;
+            border-color: rgba(247, 183, 49, 0.15);
+        }
+
+        .result .code {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 255, 200, 0.08);
+            padding: 0.3rem 1rem;
+            border-radius: 8px;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+        }
+
+        /* ───────────── FOOTER ───────────── */
         .footer {
-            margin-top: 2rem;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #335555;
+            margin-top: 2.5rem;
+            font-size: 0.65rem;
+            color: #334455;
             letter-spacing: 2px;
-            border-top: 1px solid rgba(0,255,200,0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
             padding-top: 1.5rem;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .footer span {
+            color: #00ffc8;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        @media (max-width: 600px) {
-            .container { padding: 2rem 1.5rem; }
-            .header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-            .header h1 { font-size: 1.6rem; }
-            .sys-info { grid-template-columns: 1fr; }
-            .nodes { grid-template-columns: repeat(4, 1fr); }
-            .pair-form .input-group { flex-direction: column; }
-            .pair-form button { width: 100%; }
+
+        /* ───────────── RESPONSIVE ───────────── */
+        @media (max-width: 500px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            .title {
+                font-size: 1.6rem;
+            }
+            .server-selector {
+                flex-direction: column;
+                gap: 0.4rem;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+            .input-group button {
+                width: 100%;
+            }
+            .result {
+                font-size: 1rem;
+                min-height: 60px;
+            }
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="header">
-            <h1>✦ ARSLAN MD</h1>
-            <div class="status"><span class="dot"></span> SYSTEM ONLINE</div>
+
+        <!-- Logo -->
+        <div class="logo">✦</div>
+        <div class="title">ARSLAN MD</div>
+        <div class="subtitle">Pair Your WhatsApp</div>
+
+        <!-- Status -->
+        <div class="status">
+            <span class="dot"></span> System Online
         </div>
-        <div class="sys-info">
-            <div class="item"><span class="label">NODES</span><span class="value">25</span></div>
-            <div class="item"><span class="label">VIP ACCESS</span><span class="value">ACTIVE</span></div>
-            <div class="item"><span class="label">CORE</span><span class="value">K-MD_CORE.SYS</span></div>
-            <div class="item"><span class="label">CONNECTED</span><span class="value">SVR_1</span></div>
+
+        <!-- ─── SERVER SELECTOR ────────────── -->
+        <div class="server-selector">
+            <label for="serverSelect">🌐 Select Server</label>
+            <select id="serverSelect">
+                <option value="random">🔀 Random</option>
+                <option value="SVR_1" selected>⚡ SVR_1</option>
+                <option value="SVR_2">⚡ SVR_2</option>
+                <option value="SVR_3">⚡ SVR_3</option>
+                <option value="SVR_4">⚡ SVR_4</option>
+                <option value="SVR_5">⚡ SVR_5</option>
+                <option value="SVR_6">⚡ SVR_6</option>
+                <option value="SVR_7">⚡ SVR_7</option>
+                <option value="SVR_8">⚡ SVR_8</option>
+                <option value="SVR_9">⚡ SVR_9</option>
+                <option value="SVR_10">⚡ SVR_10</option>
+                <option value="SVR_11">⚡ SVR_11</option>
+                <option value="SVR_12">⚡ SVR_12</option>
+                <option value="SVR_13">⚡ SVR_13</option>
+                <option value="SVR_14">⚡ SVR_14</option>
+                <option value="SVR_15">⚡ SVR_15</option>
+                <option value="SVR_16">⚡ SVR_16</option>
+                <option value="SVR_17">⚡ SVR_17</option>
+                <option value="SVR_18">⚡ SVR_18</option>
+                <option value="SVR_19">⚡ SVR_19</option>
+                <option value="SVR_20">⚡ SVR_20</option>
+                <option value="SVR_21">⚡ SVR_21</option>
+                <option value="SVR_22">⚡ SVR_22</option>
+                <option value="SVR_23">⚡ SVR_23</option>
+                <option value="SVR_24">⚡ SVR_24</option>
+                <option value="SVR_25">⚡ SVR_25</option>
+            </select>
+            <span class="selected-server" id="selectedDisplay">SVR_1</span>
         </div>
-        <div class="nodes" id="nodes"></div>
+
+        <!-- Form -->
         <div class="pair-form">
             <label for="phone">📱 Enter your WhatsApp number</label>
             <div class="input-group">
-                <input type="text" id="phone" placeholder="923xxxxxxxxx" value="923" />
+                <input type="text" id="phone" placeholder="923xxxxxxxxx" value="923" autofocus />
                 <button id="pairBtn">✦ Pair Now</button>
             </div>
         </div>
-        <div class="result" id="result">Enter your number and click "Pair Now"</div>
-        <div class="footer">© 2026 ARSLAN TECH'S • Powered by Baileys</div>
+
+        <!-- Result -->
+        <div class="result" id="result">
+            👋 Enter your number &amp; click Pair Now
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            © 2026 <span>ARSLAN TECH'S</span> &bull; Powered by Baileys
+        </div>
+
     </div>
+
     <script>
-        const nodesContainer = document.getElementById('nodes');
-        for (let i = 1; i <= 25; i++) {
-            const node = document.createElement('div');
-            node.className = 'node' + (i === 1 ? ' active' : '');
-            node.textContent = `SVR_${i}`;
-            nodesContainer.appendChild(node);
-        }
+        // ─── Update selected server display ────────
+        const serverSelect = document.getElementById('serverSelect');
+        const selectedDisplay = document.getElementById('selectedDisplay');
+
+        serverSelect.addEventListener('change', () => {
+            const val = serverSelect.value;
+            selectedDisplay.textContent = val === 'random' ? '🔀 Random' : val;
+        });
+
+        // ─── Pairing Logic ──────────────────────────
         const phoneInput = document.getElementById('phone');
         const pairBtn = document.getElementById('pairBtn');
         const resultDiv = document.getElementById('result');
 
-        pairBtn.addEventListener('click', async () => {
+        phoneInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') pair();
+        });
+
+        async function pair() {
             const phone = phoneInput.value.trim();
+            const server = serverSelect.value;
+
             if (!phone || phone.length < 10) {
-                resultDiv.textContent = '❌ Please enter a valid phone number (e.g., 923xxxxxxxxx)';
+                resultDiv.textContent = '❌ Please enter a valid phone number';
                 resultDiv.className = 'result error';
                 return;
             }
+
             pairBtn.disabled = true;
             pairBtn.textContent = '⏳ Requesting...';
-            resultDiv.textContent = '⏳ Connecting to server...';
-            resultDiv.className = 'result';
+            resultDiv.textContent = `⏳ Connecting to ${server === 'random' ? 'Random Server' : server}...`;
+            resultDiv.className = 'result loading';
+
             try {
+                // For demo, we just send the phone; server selection is visual only
                 const response = await fetch('/pair', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone })
+                    body: JSON.stringify({ phone, server })
                 });
+
                 const data = await response.json();
+
                 if (data.success && data.code) {
-                    resultDiv.textContent = `✅ Your pairing code: ${data.code}`;
+                    resultDiv.innerHTML = `✅ Your pairing code:<br><span class="code">${data.code}</span>`;
                     resultDiv.className = 'result';
                 } else {
-                    resultDiv.textContent = `❌ Error: ${data.error || 'Unknown error'}`;
+                    resultDiv.textContent = `❌ ${data.error || 'Unknown error'}`;
                     resultDiv.className = 'result error';
                 }
             } catch (err) {
@@ -281,7 +459,10 @@
                 pairBtn.disabled = false;
                 pairBtn.textContent = '✦ Pair Now';
             }
-        });
+        }
+
+        window.pair = pair;
     </script>
+
 </body>
 </html>
