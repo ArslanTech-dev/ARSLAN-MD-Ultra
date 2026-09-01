@@ -1,6 +1,4 @@
-// pair.js – Generate pairing code for WhatsApp
-
-const chalk = require('chalk');
+// pair.js
 const { fancyLog } = require('./utils/logger');
 
 async function requestPairingCode(sock, phoneNumber) {
@@ -9,11 +7,13 @@ async function requestPairingCode(sock, phoneNumber) {
         return null;
     }
     try {
-        const code = await sock.requestPairingCode(phoneNumber);
-        console.log(chalk.yellow('\n========== PAIRING CODE =========='));
-        console.log(chalk.green(`Code: ${code}`));
-        console.log(chalk.yellow('Enter this code on your WhatsApp phone.\n'));
-        fancyLog('SUCCESS', `Pairing code sent to ${phoneNumber}`);
+        // Clean phone number
+        const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+        const code = await sock.requestPairingCode(cleanPhone);
+        console.log('\n========== PAIRING CODE ==========');
+        console.log(`Code: ${code}`);
+        console.log('Enter this code on your WhatsApp phone.\n');
+        fancyLog('SUCCESS', `Pairing code sent to ${cleanPhone}`);
         return code;
     } catch (err) {
         fancyLog('ERROR', `Pairing failed: ${err.message}`);
