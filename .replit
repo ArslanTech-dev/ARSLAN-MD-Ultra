@@ -1,7 +1,45 @@
-modules = ["nodejs-18", "web"]
+modules = ["web", "nodejs-20"]
 
 [nix]
 channel = "stable-25_05"
 
 [agent]
 expertMode = true
+
+[deployment]
+deploymentTarget = "vm"
+publicDir = "public"
+run = ["node", "server.js"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node server.js"
+waitForPort = 5000
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
+
+[userenv]
+
+[userenv.shared]
+PAIRING_NUMBER = "923037314690"
