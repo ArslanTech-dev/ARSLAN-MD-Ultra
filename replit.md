@@ -1,0 +1,37 @@
+# ARSLAN-MD-ULTRA
+
+## Run
+
+This project is a Node.js WhatsApp bot with a browser-based pairing page. Start
+it with:
+
+```bash
+node server.js
+```
+
+The bot requires Node.js 20 or newer. On first start, copy the pairing code
+from the pairing page into WhatsApp under **Linked devices**. The page is
+served on port 5000. The linked session is stored in the local `session/`
+directory.
+
+The WhatsApp number used for pairing and ownership is supplied through the
+`PAIRING_NUMBER` environment variable. Keep that value private and update it
+before using the bot in a different environment. The pairing endpoint accepts
+only that configured owner number and limits repeated requests.
+
+## Deploy on Pxxl.app
+
+Deploy the repository as a **Web Service** from GitHub with these settings:
+
+- Runtime: Node.js 20
+- Package manager: npm
+- Install command: `npm ci`
+- Build command: none
+- Start command: `npm start`
+- Port: `5000` (or the platform-provided `PORT`)
+- Bind address: `0.0.0.0`
+
+Add `PAIRING_NUMBER` as a project environment variable or secret in Pxxl
+before deploying. Pxxl injects `PORT` at runtime, and `server.js` uses it
+automatically. Do not deploy this project as a static app because the
+WhatsApp connection and pairing endpoint require a running server.

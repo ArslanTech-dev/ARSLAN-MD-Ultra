@@ -1,11 +1,11 @@
-run = "node index.js"
+run = "node server.js"
 language = "nodejs"
 
 [nix]
 channel = "stable"
 
 [env]
-NODE_VERSION = "18"
+NODE_VERSION = "20"
 
 [packager]
 language = "nodejs"
@@ -14,4 +14,4 @@ packageSearch = true
 guessImports = true
 
 [deployment]
-run = ["node", "index.js"]
+run = ["node", "server.js"]

@@ -3,466 +3,586 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ARSLAN MD • Pairing System</title>
+    <meta name="theme-color" content="#07111f" />
+    <title>ARSLAN MD — Secure pairing</title>
     <style>
-        /* ───────────── RESET ───────────── */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --ink: #07111f;
+            --panel: rgba(13, 28, 47, 0.82);
+            --panel-soft: rgba(19, 41, 67, 0.62);
+            --line: rgba(181, 211, 238, 0.14);
+            --muted: #8ba2bb;
+            --text: #edf6ff;
+            --green: #87f7be;
+            --green-bright: #3fe79b;
+            --cyan: #7edaff;
+            --danger: #ff9ca9;
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            background: #0a0a0f;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 0%, rgba(44, 119, 154, .28), transparent 34rem),
+                radial-gradient(circle at 90% 20%, rgba(55, 165, 111, .17), transparent 30rem),
+                var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
-        /* ───────────── BACKGROUND ANIMATION ───────────── */
         body::before {
-            content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 50%, rgba(0, 255, 200, 0.05) 0%, transparent 60%),
-                        radial-gradient(circle at 70% 80%, rgba(247, 183, 49, 0.05) 0%, transparent 60%);
-            pointer-events: none;
-            animation: pulseBg 6s ease-in-out infinite alternate;
+            inset: 0;
+            z-index: -1;
+            content: "";
+            opacity: .3;
+            background-image: linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(to bottom, black, transparent 86%);
         }
 
-        @keyframes pulseBg {
-            0% { opacity: 0.5; }
-            100% { opacity: 1; }
+        button, input { font: inherit; }
+        button { cursor: pointer; }
+
+        .page {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 28px 0 32px;
         }
 
-        /* ───────────── CONTAINER ───────────── */
-        .container {
-            background: rgba(10, 10, 20, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 255, 200, 0.15);
-            border-radius: 32px;
-            padding: 3rem 3.5rem;
-            max-width: 560px;
-            width: 90%;
-            box-shadow: 0 0 80px rgba(0, 255, 200, 0.05), 0 0 30px rgba(247, 183, 49, 0.05);
-            text-align: center;
-            position: relative;
-            animation: fadeUp 1s ease-out;
-        }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ───────────── LOGO ───────────── */
-        .logo {
-            font-size: 3.5rem;
-            margin-bottom: 0.2rem;
-            display: inline-block;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            0% { text-shadow: 0 0 10px rgba(0, 255, 200, 0.2); }
-            100% { text-shadow: 0 0 40px rgba(0, 255, 200, 0.6), 0 0 80px rgba(0, 255, 200, 0.2); }
-        }
-
-        .title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #00ffc8, #f7b731);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.3rem;
-        }
-
-        .subtitle {
-            color: #88aacc;
-            font-size: 0.9rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 1.8rem;
-        }
-
-        /* ───────────── STATUS ───────────── */
-        .status {
-            display: inline-block;
-            background: rgba(0, 255, 200, 0.08);
-            border: 1px solid rgba(0, 255, 200, 0.15);
-            border-radius: 40px;
-            padding: 0.4rem 1.4rem;
-            font-size: 0.75rem;
-            color: #00ffc8;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-        }
-
-        .status .dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: #00ffc8;
-            border-radius: 50%;
-            margin-right: 8px;
-            animation: blink 1.2s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
-        }
-
-        /* ───────────── SERVER SELECTOR ───────────── */
-        .server-selector {
+        .topbar, .brand, .status, .meta, .status-dot, .secure-note, .feature-icon {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            margin-bottom: 1.8rem;
-            flex-wrap: wrap;
         }
 
-        .server-selector label {
-            font-size: 0.8rem;
-            color: #88aacc;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .topbar {
+            justify-content: space-between;
+            gap: 20px;
+            padding-bottom: 26px;
+            border-bottom: 1px solid var(--line);
         }
 
-        .server-selector select {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(0, 255, 200, 0.12);
-            border-radius: 30px;
-            padding: 0.5rem 1.2rem;
-            color: #fff;
-            font-size: 0.9rem;
-            font-family: 'Segoe UI', sans-serif;
-            outline: none;
-            cursor: pointer;
-            transition: 0.3s;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300ffc8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            padding-right: 2.5rem;
+        .brand { gap: 12px; }
+
+        .brand-mark {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            color: var(--ink);
+            background: linear-gradient(145deg, var(--green), var(--cyan));
+            border-radius: 13px;
+            box-shadow: 0 0 32px rgba(63, 231, 155, .26);
+            font-weight: 900;
         }
 
-        .server-selector select:focus {
-            border-color: #00ffc8;
-            box-shadow: 0 0 30px rgba(0, 255, 200, 0.05);
-        }
-
-        .server-selector select option {
-            background: #0a0a0f;
-            color: #fff;
-        }
-
-        .selected-server {
-            font-size: 0.8rem;
-            color: #00ffc8;
-            background: rgba(0, 255, 200, 0.06);
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 200, 0.08);
-        }
-
-        /* ───────────── FORM ───────────── */
-        .pair-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .pair-form label {
-            font-size: 0.85rem;
-            color: #88aacc;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 300;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .input-group input {
-            flex: 1;
-            min-width: 180px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 0.9rem 1.2rem;
-            color: #fff;
-            font-size: 1.1rem;
-            font-family: 'Segoe UI', sans-serif;
-            outline: none;
-            transition: 0.3s;
-            text-align: center;
-        }
-
-        .input-group input:focus {
-            border-color: #00ffc8;
-            box-shadow: 0 0 30px rgba(0, 255, 200, 0.05);
-        }
-
-        .input-group input::placeholder {
-            color: #445566;
-            font-size: 0.9rem;
-        }
-
-        .input-group button {
-            background: linear-gradient(135deg, #00ffc8, #00ddaa);
-            color: #0a0a0f;
-            border: none;
-            border-radius: 16px;
-            padding: 0.9rem 2.5rem;
-            font-weight: 700;
+        .brand-name {
+            margin: 0;
             font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
+            letter-spacing: .16em;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-family: 'Segoe UI', sans-serif;
-            flex-shrink: 0;
         }
 
-        .input-group button:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 40px rgba(0, 255, 200, 0.2);
+        .brand-subtitle {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: .76rem;
         }
 
-        .input-group button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
+        .status {
+            gap: 9px;
+            padding: 8px 13px;
+            color: var(--green);
+            border: 1px solid rgba(135, 247, 190, .25);
+            border-radius: 999px;
+            background: rgba(135, 247, 190, .07);
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .14em;
         }
 
-        /* ───────────── RESULT ───────────── */
-        .result {
-            margin-top: 1.8rem;
-            padding: 1.2rem;
-            border-radius: 16px;
-            background: rgba(0, 255, 200, 0.03);
-            border: 1px solid rgba(0, 255, 200, 0.06);
-            min-height: 70px;
-            display: flex;
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 12px currentColor;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(380px, 470px);
+            gap: clamp(34px, 7vw, 90px);
             align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #00ffc8;
-            transition: 0.3s;
-            word-break: break-all;
+            padding: clamp(56px, 9vw, 105px) 0 74px;
         }
 
-        .result.error {
-            color: #ff4477;
-            border-color: rgba(255, 68, 119, 0.2);
+        .eyebrow {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            margin: 0 0 20px;
+            color: var(--green);
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .18em;
+            text-transform: uppercase;
         }
 
-        .result.loading {
-            color: #f7b731;
-            border-color: rgba(247, 183, 49, 0.15);
+        .eyebrow::before {
+            width: 28px;
+            height: 1px;
+            content: "";
+            background: var(--green);
         }
 
-        .result .code {
-            font-family: 'Courier New', monospace;
-            background: rgba(0, 255, 200, 0.08);
-            padding: 0.3rem 1rem;
+        h1 {
+            max-width: 620px;
+            margin: 0;
+            font-size: clamp(2.6rem, 6vw, 5.4rem);
+            line-height: .98;
+            letter-spacing: -.065em;
+        }
+
+        h1 em {
+            color: var(--green);
+            font-style: normal;
+        }
+
+        .intro {
+            max-width: 510px;
+            margin: 26px 0 0;
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.75;
+        }
+
+        .meta {
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 30px;
+        }
+
+        .meta span {
+            padding: 8px 11px;
+            color: #b6cce0;
+            border: 1px solid var(--line);
             border-radius: 8px;
-            font-size: 1.6rem;
-            letter-spacing: 4px;
+            background: rgba(255, 255, 255, .035);
+            font-size: .73rem;
         }
 
-        /* ───────────── FOOTER ───────────── */
-        .footer {
-            margin-top: 2.5rem;
-            font-size: 0.65rem;
-            color: #334455;
-            letter-spacing: 2px;
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            padding-top: 1.5rem;
+        .pair-card {
+            position: relative;
+            padding: 27px;
+            overflow: hidden;
+            border: 1px solid rgba(159, 209, 235, .2);
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(24, 52, 79, .9), rgba(9, 23, 40, .92));
+            box-shadow: 0 28px 90px rgba(0, 0, 0, .28), inset 0 1px rgba(255,255,255,.07);
         }
 
-        .footer span {
-            color: #00ffc8;
+        .pair-card::before {
+            position: absolute;
+            top: -100px;
+            right: -70px;
+            width: 240px;
+            height: 240px;
+            content: "";
+            border-radius: 50%;
+            background: rgba(63, 231, 155, .1);
+            filter: blur(10px);
         }
 
-        /* ───────────── RESPONSIVE ───────────── */
-        @media (max-width: 500px) {
-            .container {
-                padding: 2rem 1.5rem;
-            }
-            .title {
-                font-size: 1.6rem;
-            }
-            .server-selector {
-                flex-direction: column;
-                gap: 0.4rem;
-            }
-            .input-group {
-                flex-direction: column;
-            }
-            .input-group button {
-                width: 100%;
-            }
-            .result {
-                font-size: 1rem;
-                min-height: 60px;
-            }
+        .card-head, .card-title, .field-label, .form-row, .card-foot, .steps-head {
+            position: relative;
+        }
+
+        .card-head, .card-foot, .steps-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .card-kicker {
+            margin: 0 0 6px;
+            color: var(--green);
+            font-size: .68rem;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.45rem;
+            letter-spacing: -.03em;
+        }
+
+        .card-version {
+            color: var(--muted);
+            font-size: .7rem;
+        }
+
+        .progress {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 25px 0 28px;
+        }
+
+        .progress span {
+            height: 4px;
+            border-radius: 9px;
+            background: var(--green-bright);
+            box-shadow: 0 0 12px rgba(63, 231, 155, .3);
+        }
+
+        .progress span:nth-child(3) { background: rgba(181, 211, 238, .18); box-shadow: none; }
+
+        .field-label {
+            display: block;
+            margin-bottom: 9px;
+            color: #bad0e4;
+            font-size: .76rem;
+            font-weight: 700;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            min-width: 0;
+            width: 100%;
+            padding: 14px 15px;
+            color: var(--text);
+            border: 1px solid rgba(181, 211, 238, .2);
+            outline: none;
+            border-radius: 12px;
+            background: rgba(4, 14, 27, .72);
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        input::placeholder { color: #60768b; }
+        input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(135, 247, 190, .09);
+        }
+
+        .pair-button {
+            flex: 0 0 auto;
+            padding: 0 19px;
+            color: #06121d;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            font-size: .8rem;
+            font-weight: 900;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            box-shadow: 0 12px 25px rgba(63, 231, 155, .18);
+            transition: transform .2s, filter .2s, opacity .2s;
+        }
+
+        .pair-button:hover { transform: translateY(-2px); filter: brightness(1.08); }
+        .pair-button:disabled { cursor: not-allowed; opacity: .55; transform: none; }
+
+        .result {
+            display: grid;
+            min-height: 78px;
+            margin-top: 18px;
+            padding: 14px;
+            place-items: center;
+            gap: 4px;
+            color: #abc1d5;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: rgba(4, 14, 27, .38);
+            text-align: center;
+            font-size: .86rem;
+        }
+
+        .result.success {
+            color: var(--green);
+            border-color: rgba(135, 247, 190, .32);
+            background: rgba(63, 231, 155, .08);
+        }
+
+        .result.error { color: var(--danger); border-color: rgba(255, 156, 169, .32); }
+        .result strong { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+
+        .result code {
+            color: #fff;
+            font-size: 1.5rem;
+            letter-spacing: .2em;
+        }
+
+        .secure-note {
+            gap: 8px;
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: .72rem;
+            line-height: 1.45;
+        }
+
+        .secure-note b { color: var(--green); font-size: 1rem; }
+
+        .card-foot {
+            margin-top: 25px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+            color: #6f879e;
+            font-size: .7rem;
+        }
+
+        .card-foot span:last-child { color: var(--green); }
+
+        .steps {
+            padding: 24px 0 14px;
+            border-top: 1px solid var(--line);
+        }
+
+        .steps-head h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            letter-spacing: -.02em;
+        }
+
+        .steps-head p {
+            margin: 0;
+            color: var(--muted);
+            font-size: .75rem;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .step {
+            padding: 19px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, .025);
+        }
+
+        .feature-icon {
+            width: 31px;
+            height: 31px;
+            justify-content: center;
+            margin-bottom: 14px;
+            color: var(--green);
+            border-radius: 9px;
+            background: rgba(135, 247, 190, .1);
+            font-size: .8rem;
+            font-weight: 900;
+        }
+
+        .step h3 { margin: 0 0 6px; font-size: .88rem; }
+        .step p { margin: 0; color: var(--muted); font-size: .76rem; line-height: 1.55; }
+
+        footer {
+            padding-top: 32px;
+            color: #61778c;
+            font-size: .72rem;
+            text-align: center;
+        }
+
+        @media (max-width: 800px) {
+            .hero { grid-template-columns: 1fr; padding-top: 62px; }
+            .hero-copy { max-width: 650px; }
+            .pair-card { max-width: 580px; }
+        }
+
+        @media (max-width: 520px) {
+            .page { width: min(100% - 26px, 1120px); padding-top: 18px; }
+            .topbar { align-items: flex-start; }
+            .status { padding: 7px 9px; font-size: .62rem; }
+            .brand-subtitle { display: none; }
+            .hero { padding: 50px 0 55px; }
+            h1 { font-size: 3.15rem; }
+            .intro { font-size: .95rem; }
+            .pair-card { padding: 21px; border-radius: 19px; }
+            .form-row { flex-direction: column; }
+            .pair-button { min-height: 48px; }
+            .step-grid { grid-template-columns: 1fr; }
+            .steps-head { display: block; }
+            .steps-head p { margin-top: 7px; }
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-
-        <!-- Logo -->
-        <div class="logo">✦</div>
-        <div class="title">ARSLAN MD</div>
-        <div class="subtitle">Pair Your WhatsApp</div>
-
-        <!-- Status -->
-        <div class="status">
-            <span class="dot"></span> System Online
-        </div>
-
-        <!-- ─── SERVER SELECTOR ────────────── -->
-        <div class="server-selector">
-            <label for="serverSelect">🌐 Select Server</label>
-            <select id="serverSelect">
-                <option value="random">🔀 Random</option>
-                <option value="SVR_1" selected>⚡ SVR_1</option>
-                <option value="SVR_2">⚡ SVR_2</option>
-                <option value="SVR_3">⚡ SVR_3</option>
-                <option value="SVR_4">⚡ SVR_4</option>
-                <option value="SVR_5">⚡ SVR_5</option>
-                <option value="SVR_6">⚡ SVR_6</option>
-                <option value="SVR_7">⚡ SVR_7</option>
-                <option value="SVR_8">⚡ SVR_8</option>
-                <option value="SVR_9">⚡ SVR_9</option>
-                <option value="SVR_10">⚡ SVR_10</option>
-                <option value="SVR_11">⚡ SVR_11</option>
-                <option value="SVR_12">⚡ SVR_12</option>
-                <option value="SVR_13">⚡ SVR_13</option>
-                <option value="SVR_14">⚡ SVR_14</option>
-                <option value="SVR_15">⚡ SVR_15</option>
-                <option value="SVR_16">⚡ SVR_16</option>
-                <option value="SVR_17">⚡ SVR_17</option>
-                <option value="SVR_18">⚡ SVR_18</option>
-                <option value="SVR_19">⚡ SVR_19</option>
-                <option value="SVR_20">⚡ SVR_20</option>
-                <option value="SVR_21">⚡ SVR_21</option>
-                <option value="SVR_22">⚡ SVR_22</option>
-                <option value="SVR_23">⚡ SVR_23</option>
-                <option value="SVR_24">⚡ SVR_24</option>
-                <option value="SVR_25">⚡ SVR_25</option>
-            </select>
-            <span class="selected-server" id="selectedDisplay">SVR_1</span>
-        </div>
-
-        <!-- Form -->
-        <div class="pair-form">
-            <label for="phone">📱 Enter your WhatsApp number</label>
-            <div class="input-group">
-                <input type="text" id="phone" placeholder="923xxxxxxxxx" value="923" autofocus />
-                <button id="pairBtn">✦ Pair Now</button>
+    <main class="page">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">A</div>
+                <div>
+                    <p class="brand-name">Arslan MD</p>
+                    <p class="brand-subtitle">WhatsApp automation core</p>
+                </div>
             </div>
-        </div>
+            <div class="status" id="status">
+                <span class="status-dot"></span>
+                <span id="statusText">STARTING</span>
+            </div>
+        </header>
 
-        <!-- Result -->
-        <div class="result" id="result">
-            👋 Enter your number &amp; click Pair Now
-        </div>
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Secure device pairing</p>
+                <h1>Connect your bot.<br /><em>Stay in control.</em></h1>
+                <p class="intro">
+                    Link your WhatsApp account to ARSLAN MD in seconds.
+                    Your pairing code is generated by the live bot and expires
+                    shortly after it is issued.
+                </p>
+                <div class="meta">
+                    <span>● Multi-device ready</span>
+                    <span>● Node 20 runtime</span>
+                    <span>● Owner-only access</span>
+                </div>
+            </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            © 2026 <span>ARSLAN TECH'S</span> &bull; Powered by Baileys
-        </div>
+            <section class="pair-card" aria-labelledby="pair-title">
+                <div class="card-head">
+                    <div>
+                        <p class="card-kicker">Connection setup</p>
+                        <h2 class="card-title" id="pair-title">Pair a device</h2>
+                    </div>
+                    <span class="card-version">v4.0</span>
+                </div>
+                <div class="progress" aria-hidden="true"><span></span><span></span><span></span></div>
 
-    </div>
+                <label class="field-label" for="phone">WhatsApp number with country code</label>
+                <form class="form-row" id="pairForm">
+                    <input id="phone" name="phone" inputmode="numeric" autocomplete="tel"
+                        placeholder="923xxxxxxxxx" value="923" required />
+                    <button class="pair-button" id="pairBtn" type="submit">Get code</button>
+                </form>
+
+                <div class="result" id="result" role="status" aria-live="polite">
+                    Enter your number to generate a pairing code
+                </div>
+
+                <p class="secure-note"><b>⌁</b> Your number is checked against the configured owner account and is never displayed publicly.</p>
+                <div class="card-foot">
+                    <span>Powered by Baileys</span>
+                    <span id="connection">● STARTING</span>
+                </div>
+            </section>
+        </section>
+
+        <section class="steps" aria-labelledby="steps-title">
+            <div class="steps-head">
+                <h2 id="steps-title">Three steps to go live</h2>
+                <p>Keep this page open while linking.</p>
+            </div>
+            <div class="step-grid">
+                <article class="step">
+                    <div class="feature-icon">01</div>
+                    <h3>Enter your number</h3>
+                    <p>Use the full country code, without plus signs or spaces.</p>
+                </article>
+                <article class="step">
+                    <div class="feature-icon">02</div>
+                    <h3>Get your code</h3>
+                    <p>Tap Get code and copy the fresh eight-character code.</p>
+                </article>
+                <article class="step">
+                    <div class="feature-icon">03</div>
+                    <h3>Link in WhatsApp</h3>
+                    <p>Open Linked devices and choose “Link with phone number instead.”</p>
+                </article>
+            </div>
+        </section>
+
+        <footer>© 2026 ARSLAN TECH'S · Private owner pairing · Built for always-on automation</footer>
+    </main>
 
     <script>
-        // ─── Update selected server display ────────
-        const serverSelect = document.getElementById('serverSelect');
-        const selectedDisplay = document.getElementById('selectedDisplay');
-
-        serverSelect.addEventListener('change', () => {
-            const val = serverSelect.value;
-            selectedDisplay.textContent = val === 'random' ? '🔀 Random' : val;
-        });
-
-        // ─── Pairing Logic ──────────────────────────
+        const form = document.getElementById('pairForm');
         const phoneInput = document.getElementById('phone');
         const pairBtn = document.getElementById('pairBtn');
-        const resultDiv = document.getElementById('result');
+        const result = document.getElementById('result');
+        const statusText = document.getElementById('statusText');
+        const connection = document.getElementById('connection');
+        let busy = false;
 
-        phoneInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') pair();
-        });
+        function showMessage(message, kind = '') {
+            result.className = `result ${kind}`.trim();
+            result.textContent = message;
+        }
 
-        async function pair() {
-            const phone = phoneInput.value.trim();
-            const server = serverSelect.value;
+        function showCode(code) {
+            result.className = 'result success';
+            result.replaceChildren();
+            const title = document.createElement('strong');
+            title.textContent = 'Your pairing code';
+            const value = document.createElement('code');
+            value.textContent = code;
+            result.append(title, value);
+        }
 
-            if (!phone || phone.length < 10) {
-                resultDiv.textContent = '❌ Please enter a valid phone number';
-                resultDiv.className = 'result error';
-                return;
-            }
-
-            pairBtn.disabled = true;
-            pairBtn.textContent = '⏳ Requesting...';
-            resultDiv.textContent = `⏳ Connecting to ${server === 'random' ? 'Random Server' : server}...`;
-            resultDiv.className = 'result loading';
-
+        async function refreshStatus() {
             try {
-                // For demo, we just send the phone; server selection is visual only
-                const response = await fetch('/pair', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, server })
-                });
-
+                const response = await fetch('/status', { cache: 'no-store' });
                 const data = await response.json();
-
-                if (data.success && data.code) {
-                    resultDiv.innerHTML = `✅ Your pairing code:<br><span class="code">${data.code}</span>`;
-                    resultDiv.className = 'result';
-                } else {
-                    resultDiv.textContent = `❌ ${data.error || 'Unknown error'}`;
-                    resultDiv.className = 'result error';
+                const label = data.connected ? 'CONNECTED' : String(data.state || 'STARTING').toUpperCase();
+                statusText.textContent = label;
+                connection.textContent = `● ${label}`;
+                pairBtn.disabled = Boolean(data.connected) || busy;
+                if (data.connected) showMessage('Bot is already connected to WhatsApp', 'success');
+                if (data.state === 'disconnected') {
+                    showMessage('The bot is restarting for a fresh pairing', 'error');
                 }
-            } catch (err) {
-                resultDiv.textContent = `❌ Network error: ${err.message}`;
-                resultDiv.className = 'result error';
-            } finally {
-                pairBtn.disabled = false;
-                pairBtn.textContent = '✦ Pair Now';
+            } catch {
+                statusText.textContent = 'OFFLINE';
+                connection.textContent = '● OFFLINE';
+                showMessage('Pairing service is temporarily unavailable', 'error');
             }
         }
 
-        window.pair = pair;
-    </script>
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const phone = phoneInput.value.trim();
+            if (!/^\d{10,15}$/.test(phone)) {
+                showMessage('Enter a valid number with country code', 'error');
+                return;
+            }
 
+            busy = true;
+            pairBtn.disabled = true;
+            pairBtn.textContent = 'Working…';
+            showMessage('Requesting a fresh code…');
+
+            try {
+                const response = await fetch('/pair', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone }),
+                });
+                const data = await response.json();
+                if (data.success && data.code) showCode(data.code);
+                else showMessage(data.error || 'Unable to generate a pairing code', 'error');
+            } catch {
+                showMessage('Network error. Check the bot workflow and try again.', 'error');
+            } finally {
+                busy = false;
+                pairBtn.textContent = 'Get code';
+                refreshStatus();
+            }
+        });
+
+        refreshStatus();
+        setInterval(refreshStatus, 5000);
+    </script>
 </body>
 </html>
