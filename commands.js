@@ -6,7 +6,7 @@
  */
 
 const os = require('os');
-const { fancyLog } = require('../utils/logger');
+const { fancyLog } = require('./utils/logger');
 
 // ─── Helper Functions ──────────────────────────
 function getUptime() {
@@ -18,7 +18,7 @@ function getUptime() {
 }
 
 function getTotalCommands() {
-    return '340+';
+    return '280+';
 }
 
 function getTextLogo() {
@@ -217,35 +217,14 @@ ${logo}
 ║  ${p}ransom                                                  ║
 ║  ${p}hack                                                    ║
 ║                                                              ║
-║  💕 FLIRTY & LOVE                                            ║
+║  ❤️ LOVE (Saba × Janu)                                      ║
 ║  ──────────────────────────────────────────────────────────   ║
-║  ${p}pickup                                                  ║
-║  ${p}flirt                                                   ║
-║  ${p}compliment                                              ║
-║  ${p}crush                                                   ║
-║  ${p}heartbeats                                              ║
-║  ${p}loveyou                                                 ║
-║  ${p}lovemeter                                               ║
-║  ${p}flirtypickup                                            ║
-║  ${p}romantic                                                ║
 ║  ${p}saba                                                    ║
 ║  ${p}sabalove                                                ║
 ║  ${p}janu                                                    ║
 ║  ${p}janulove                                                ║
 ║  ${p}couple                                                  ║
 ║  ${p}romance                                                 ║
-║                                                              ║
-║  💋 SEXY & HOT (sx)                                          ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}sexy                                                    ║
-║  ${p}hot                                                     ║
-║  ${p}hotcompliment                                           ║
-║  ${p}dirtypickup                                             ║
-║  ${p}romanticsexy                                            ║
-║  ${p}hotmeter                                                ║
-║  ${p}sexymessage                                             ║
-║  ${p}steamy                                                  ║
-║  ${p}kiss                                                    ║
 ║                                                              ║
 ║  💕 COUPLE (Arslan × Saba)                                   ║
 ║  ──────────────────────────────────────────────────────────   ║
@@ -297,17 +276,6 @@ ${logo}
 ║  ${p}mystruggle                                              ║
 ║  ${p}mystatusbar                                             ║
 ║                                                              ║
-║  🧑‍💻 ARSLAN TECH'S PERSONAL                                  ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}arslan                                                  ║
-║  ${p}arslanfact                                              ║
-║  ${p}arslandream                                             ║
-║  ${p}arslanlove                                              ║
-║  ${p}arslanquote                                             ║
-║  ${p}arslanstudy                                             ║
-║  ${p}arslangoal                                              ║
-║  ${p}arslanvibes                                             ║
-║                                                              ║
 ║  ✨ AESTHETIC                                                ║
 ║  ──────────────────────────────────────────────────────────   ║
 ║  ${p}aesthetic                                               ║
@@ -327,63 +295,6 @@ ${logo}
 ║  ${p}matrix                                                  ║
 ║  ${p}typing                                                  ║
 ║  ${p}loading                                                 ║
-║                                                              ║
-║  💻 LINUX ADVANCE                                            ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}matrix                                                  ║
-║  ${p}hacker                                                  ║
-║  ${p}neon                                                    ║
-║  ${p}glitch                                                  ║
-║  ${p}terminal                                                ║
-║  ${p}neural                                                  ║
-║  ${p}scan                                                    ║
-║  ${p}firewall                                                ║
-║  ${p}datastream                                              ║
-║  ${p}pingmatrix                                              ║
-║  ${p}hackerart                                               ║
-║                                                              ║
-║  🪟 WINDOWS ADVANCE                                          ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}winstartup                                              ║
-║  ${p}bsod                                                    ║
-║  ${p}cmd                                                     ║
-║  ${p}winsettings                                             ║
-║  ${p}winexplorer                                             ║
-║  ${p}winupdate                                               ║
-║  ${p}winerror                                                ║
-║  ${p}winregistry                                             ║
-║  ${p}winlogo                                                 ║
-║  ${p}wintaskmanager                                          ║
-║                                                              ║
-║  💢 FK (Fun)                                                 ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}fk                                                      ║
-║  ${p}fkyou                                                   ║
-║  ${p}fkubaby                                                 ║
-║  ${p}fkmeter                                                 ║
-║  ${p}fkoff                                                   ║
-║  ${p}fkall                                                   ║
-║                                                              ║
-║  🧠 MOOD & LOVE                                              ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}moodoff                                                 ║
-║  ${p}cheerup                                                 ║
-║  ${p}motivate                                                ║
-║  ${p}loveboost                                               ║
-║  ${p}hug                                                     ║
-║  ${p}moodmeter                                               ║
-║  ${p}miracle                                                 ║
-║                                                              ║
-║  🎵 SIDHU MOOSE WALA                                         ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}sidhu                                                   ║
-║  ${p}sidhusong                                               ║
-║  ${p}sidhufact                                               ║
-║  ${p}sidhutop5                                               ║
-║  ${p}sidhustatus                                             ║
-║  ${p}sidhutribute                                            ║
-║  ${p}sidhuquote                                              ║
-║  ${p}moosewala                                               ║
 ║                                                              ║
 ║  💻 TERMUX STYLE                                             ║
 ║  ──────────────────────────────────────────────────────────   ║
@@ -418,31 +329,6 @@ ${logo}
 ║  ${p}transfer                                                ║
 ║  ${p}leaderboard                                             ║
 ║  ${p}gamble                                                  ║
-║                                                              ║
-║  📱 VIRTUAL NUMBERS                                          ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}vnumber                                                 ║
-║  ${p}vsms                                                    ║
-║                                                              ║
-║  📶 SIM DATA                                                 ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}simdata                                                 ║
-║  ${p}sim                                                     ║
-║                                                              ║
-║  📞 PHONE INFO                                               ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}myphone                                                 ║
-║  ${p}myid                                                    ║
-║                                                              ║
-║  🎵 SONG & VIDEO DOWNLOAD                                    ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}song                                                    ║
-║  ${p}dl                                                      ║
-║                                                              ║
-║  📸 INSTAGRAM DOWNLOAD                                       ║
-║  ──────────────────────────────────────────────────────────   ║
-║  ${p}insta                                                   ║
-║  ${p}ig                                                      ║
 ║                                                              ║
 ║  🧩 MORE PLUGINS                                            ║
 ║  ──────────────────────────────────────────────────────────   ║
@@ -531,13 +417,6 @@ ${logo}
 ║  ${p}aiimg                                                   ║
 ║  ${p}fakechat                                                ║
 ║  ${p}tempmail                                                ║
-║  ${p}bg                                                      ║
-║  ${p}attitude                                                ║
-║  ${p}attitudestatus                                          ║
-║  ${p}attitudereply                                           ║
-║  ${p}swag                                                    ║
-║  ${p}myattitude                                              ║
-║  ${p}attitudevs                                              ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 ║                                                              ║
