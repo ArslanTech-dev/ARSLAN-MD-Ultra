@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'arslan-md',
-    script: 'index.js',
+    script: 'server.js',
     watch: false,
     exec_mode: 'fork',
     instances: 1,
