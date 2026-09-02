@@ -1,23 +1,26 @@
 {
   "name": "arslan-md-ultra",
   "version": "4.0.0",
-  "description": "Ultimate WhatsApp bot with 280+ commands, AI, downloaders, and group management.",
+  "description": "Modular WhatsApp bot with 181+ commands, plugin system, and pairing code support.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "init-db": "node init-db.js"
+    "start": "node server.js",
+    "bot": "node index.js",
+    "dev": "nodemon index.js"
   },
+  "author": "ARSLAN TECH'S",
+  "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^10.0.1",
-    "@whiskeysockets/baileys": "^6.7.0",
-    "axios": "^1.7.7",
-    "chalk": "^5.3.0",
-    "cors": "^2.8.5",
-    "express": "^4.21.1",
-    "moment-timezone": "^0.5.46",
-    "pino": "^9.5.0",
-    "qrcode-terminal": "^0.12.0",
-    "sqlite3": "^5.1.7"
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
+    "axios": "^1.20.0",
+    "chalk": "^4.1.2",
+    "moment-timezone": "^0.5.48",
+    "pino": "^8.21.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   },
   "engines": {
     "node": ">=20.0.0"
