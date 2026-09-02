@@ -1,9 +1,8 @@
 // ===============================================
-// ARSLAN MD ULTRA v4.0 – Bonto Optimized
+// ARSLAN MD ULTRA v4.0 – MODULAR & PLUGIN‑READY
+// CREATOR: ARSLAN TECH'S
 // ===============================================
 
-const express = require('express');
-const cors = require('cors');
 const { Boom } = require('@hapi/boom');
 const {
     default: makeWASocket,
@@ -11,8 +10,10 @@ const {
     useMultiFileAuthState,
 } = require('@whiskeysockets/baileys');
 const pino = require('pino');
+const chalk = require('chalk');
+const fs = require('fs');
 const config = require('./config');
-const { handleMessage } = require('./handlers/message');
+const { handleMessage } = require('./handlers');
 const { requestPairingCode } = require('./pair');
 const { fancyLog } = require('./utils/logger');
 
@@ -24,160 +25,160 @@ global.OWNER = config.OWNER;
 global.OWNER_NAME = config.OWNER_NAME;
 global.VERSION = config.VERSION;
 
-// ===== EXPRESS APP =====
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
-
-// ===== HEALTH CHECK =====
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok', uptime: process.uptime() });
-});
-
-// ===== ROOT (Pairing Page) =====
-app.get('/', (req, res) => {
-    try {
-        res.sendFile(__dirname + '/public/index.html');
-    } catch (err) {
-        res.status(500).send('Error loading index.html: ' + err.message);
-    }
-});
-
-// ===== PAIRING VIA WEB (FIXED) =====
-let sock;
-app.post('/pair', async (req, res) => {
-    try {
-        let { phone } = req.body;
-        if (!phone) {
-            return res.status(400).json({ error: 'Phone number is required' });
-        }
-
-        // Sanitize: remove all non-digit characters
-        const cleanPhone = phone.replace(/[^0-9]/g, '');
-        if (cleanPhone.length < 10) {
-            return res.status(400).json({ error: 'Invalid phone number. Must be at least 10 digits.' });
-        }
-
-        if (!sock) {
-            return res.status(503).json({ error: 'Bot is not connected yet. Please wait a moment.' });
-        }
-
-        // Use the pair.js function for consistency and error handling
-        const code = await requestPairingCode(sock, cleanPhone);
-        if (code) {
-            res.json({ success: true, code });
-        } else {
-            res.status(500).json({ error: 'Failed to generate pairing code. Check logs.' });
-        }
-    } catch (err) {
-        console.error('Pairing endpoint error:', err);
-        res.status(500).json({ error: err.message || 'Internal server error' });
-    }
-});
-
 // ===== START BOT =====
+let sock;
 let reconnecting = false;
+let connectionState = 'starting';
+let pairingCode = null;
+let pairingRequestedAt = 0;
 
 async function startBot() {
     if (reconnecting) return;
     reconnecting = true;
+    connectionState = 'starting';
+
     fancyLog('INFO', `Starting ${global.BOT_NAME}...`);
 
-    try {
-        const { state, saveCreds } = await useMultiFileAuthState('session');
-        sock = makeWASocket({
-            logger: pino({ level: 'silent' }),
-            printQRInTerminal: false,
-            auth: state,
-            browser: ['Ubuntu', 'Chrome', '20.0.04'],
-            syncFullHistory: false,
-            markOnlineOnConnect: false,
-            connectTimeoutMs: 60000,
-            getMessage: async () => ({ conversation: '' }),
-        });
+    const { state, saveCreds } = await useMultiFileAuthState('session');
+    sock = makeWASocket({
+        logger: pino({ level: 'silent' }),
+        printQRInTerminal: false,
+        auth: state,
+        browser: ['Ubuntu', 'Chrome', '20.0.04'],
+        syncFullHistory: false,
+        markOnlineOnConnect: false,
+        connectTimeoutMs: 60000,
+        getMessage: async () => ({ conversation: '' }),
+    });
 
-        sock.ev.on('creds.update', saveCreds);
+    sock.ev.on('creds.update', saveCreds);
 
-        sock.ev.on('connection.update', async (update) => {
-            const { connection, lastDisconnect, qr } = update;
-            if (qr) {
-                // Attempt to generate pairing code using the PAIRING_NUMBER from config/env
-                const pairingNumber = config.PAIRING_NUMBER || process.env.PAIRING_NUMBER;
-                if (pairingNumber) {
-                    await requestPairingCode(sock, pairingNumber);
-                } else {
-                    fancyLog('WARN', 'PAIRING_NUMBER not set. Please set it in config or env.');
-                }
-            }
-            if (connection === 'close') {
-                reconnecting = false;
-                const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-                fancyLog('ERROR', `Connection closed. Reason: ${reason}`);
-                if (reason === DisconnectReason.loggedOut) {
-                    fancyLog('ERROR', 'Logged out. Delete session folder.');
-                } else {
-                    fancyLog('INFO', 'Reconnecting in 5s...');
-                    setTimeout(startBot, 5000);
-                }
-            } else if (connection === 'open') {
-                reconnecting = false;
-                fancyLog('SUCCESS', `${global.BOT_NAME} Connected!`);
-                const ownerJid = config.OWNER[0];
-                if (ownerJid) {
-                    try {
-                        await sock.sendMessage(ownerJid, {
-                            image: { url: global.BOT_LOGO },
-                            caption: `╭─⬡ *${global.BOT_NAME} ONLINE* ⬡─╮\n│\n│ ✅ Bot started!\n│ 🧠 Version: ${global.VERSION}\n│ 👑 Owner: ${global.OWNER_NAME}\n│\n╰───────────────────╯\n> *Powered by ARSLAN TECH'S*`,
-                        });
-                    } catch (e) {
-                        fancyLog('ERROR', 'Failed to send welcome message to owner.');
-                    }
-                }
-            }
-        });
+    sock.ev.on('connection.update', async (update) => {
+        const { connection, lastDisconnect, qr } = update;
 
-        sock.ev.on('messages.upsert', async (m) => {
+        // ---------- PAIRING CODE (using pair.js) ----------
+        if (update.qr) {
+            connectionState = 'pairing';
             try {
-                const msg = m.messages[0];
-                if (!msg.message || msg.key.fromMe) return;
-                await handleMessage(sock, msg);
+                await createPairingCode(config.PAIRING_NUMBER);
             } catch (err) {
-                fancyLog('ERROR', `Message handler error: ${err.message}`);
+                fancyLog('ERROR', `Pairing failed: ${err.message}`);
             }
-        });
-
-        if (config.ANTI_CALL) {
-            sock.ev.on('CB:call', async (json) => {
-                try {
-                    const callId = json.content[0].attrs['call-id'];
-                    const callerId = json.content[0].attrs['from'];
-                    await sock.rejectCall(callId, callerId);
-                    if (config.AUTO_BLOCK_CALL) {
-                        await sock.updateBlockStatus(callerId, 'block');
-                    }
-                } catch (err) {
-                    fancyLog('ERROR', 'Anti-call error: ' + err.message);
-                }
-            });
         }
 
-        fancyLog('INFO', 'Bot started successfully.');
-    } catch (err) {
-        fancyLog('ERROR', `Failed to start bot: ${err.message}`);
-        reconnecting = false;
-        setTimeout(startBot, 10000);
+        if (connection === 'close') {
+            reconnecting = false;
+            connectionState = 'disconnected';
+            pairingCode = null;
+            const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+            fancyLog('ERROR', `Connection closed. Reason: ${reason}`);
+            if (reason === DisconnectReason.loggedOut) {
+                pairingCode = null;
+                try {
+                    fs.rmSync('session', { recursive: true, force: true });
+                    fs.mkdirSync('session', { recursive: true });
+                    fancyLog('WARN', 'Invalid WhatsApp session cleared. Starting fresh pairing...');
+                } catch (err) {
+                    fancyLog('ERROR', `Could not reset WhatsApp session: ${err.message}`);
+                }
+                setTimeout(startBot, 3000);
+            } else {
+                fancyLog('INFO', 'Reconnecting in 5 seconds...');
+                setTimeout(startBot, 5000);
+            }
+        } else if (connection === 'open') {
+            reconnecting = false;
+            connectionState = 'connected';
+            pairingCode = null;
+            fancyLog('SUCCESS', `${global.BOT_NAME} Connected!`);
+
+            // ---------- WELCOME MESSAGE TO OWNER ----------
+            const ownerJid = config.OWNER[0];
+            if (ownerJid) {
+                try {
+                    await sock.sendMessage(ownerJid, {
+                        text: `╭─⬡ *${global.BOT_NAME} ONLINE* ⬡─╮
+│
+│ ✅ Bot started successfully!
+│ 🧠 Version: ${global.VERSION}
+│ 👑 Owner: ${global.OWNER_NAME}
+│ 🔗 Now listening for commands...
+│
+╰───────────────────╯
+> *Powered by ARSLAN TECH'S*`,
+                    });
+                    fancyLog('SUCCESS', 'Welcome message sent to owner.');
+                } catch (err) {
+                    fancyLog('ERROR', 'Could not send welcome message.');
+                }
+            }
+        }
+    });
+
+    // ---------- MESSAGE HANDLER ----------
+    sock.ev.on('messages.upsert', async (m) => {
+        try {
+            const msg = m.messages[0];
+            if (!msg.message || msg.key.fromMe) return;
+            await handleMessage(sock, msg);
+        } catch (err) {
+            fancyLog('ERROR', `Message handler error: ${err.message}`);
+        }
+    });
+
+    // ---------- ANTI-CALL ----------
+    if (config.ANTI_CALL) {
+        sock.ev.on('CB:call', async (json) => {
+            const callId = json.content[0].attrs['call-id'];
+            const callerId = json.content[0].attrs['from'];
+            await sock.rejectCall(callId, callerId);
+            fancyLog('ANTICALL', `Rejected call from ${callerId}`);
+            if (config.AUTO_BLOCK_CALL) {
+                await sock.updateBlockStatus(callerId, 'block');
+                fancyLog('BLOCK', `Blocked caller ${callerId}`);
+            }
+        });
     }
+
+    return sock;
 }
 
-// ===== START SERVER =====
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🌐 Web server running on port ${PORT}`);
-    console.log(`👉 Pairing page available at https://${process.env.APP_URL || 'localhost'}`);
-});
+async function createPairingCode(phoneNumber = config.PAIRING_NUMBER) {
+    if (!sock) {
+        throw new Error('WhatsApp connection is still starting. Try again in a few seconds.');
+    }
+    if (connectionState === 'connected') {
+        throw new Error('This bot is already connected to WhatsApp.');
+    }
 
-// ===== START BOT =====
-startBot().catch((err) => {
-    fancyLog('ERROR', `Start failed: ${err.message}`);
-});
+    const now = Date.now();
+    if (pairingCode && now - pairingRequestedAt < 45000) {
+        return pairingCode;
+    }
+
+    pairingRequestedAt = now;
+    pairingCode = await requestPairingCode(sock, phoneNumber);
+    if (!pairingCode) {
+        throw new Error('WhatsApp did not return a pairing code.');
+    }
+    setTimeout(() => {
+        if (Date.now() - pairingRequestedAt >= 45000) pairingCode = null;
+    }, 45000);
+    return pairingCode;
+}
+
+function getBotStatus() {
+    return {
+        state: connectionState,
+        connected: connectionState === 'connected' && Boolean(sock?.user),
+        pairingAvailable: connectionState !== 'disconnected' && Boolean(sock && !sock.user),
+    };
+}
+
+if (require.main === module) {
+    startBot().catch((err) => {
+        fancyLog('ERROR', `Start failed: ${err.message}`);
+    });
+}
+
+module.exports = { createPairingCode, getBotStatus, startBot };
