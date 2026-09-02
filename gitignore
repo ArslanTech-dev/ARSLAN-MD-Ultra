@@ -6,6 +6,4 @@ config.local.js
 .DS_Store
 Thumbs.db
 data/
-.replit
-replit.
 render.yaml
