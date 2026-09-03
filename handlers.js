@@ -10,7 +10,7 @@ const commandModule = require('./commands');
 
 // ─── PLUGIN LOADER ────────────────────────────
 function loadPlugins() {
-    const pluginsDir = path.join(__dirname, '..', 'plugins');
+    const pluginsDir = path.join(__dirname, 'plugins');
     const pluginCommands = {};
     if (fs.existsSync(pluginsDir)) {
         const files = fs.readdirSync(pluginsDir).filter(f => f.endsWith('.js'));

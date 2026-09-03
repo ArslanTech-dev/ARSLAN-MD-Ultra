@@ -226,6 +226,15 @@ ${logo}
 ║  ${p}couple                                                  ║
 ║  ${p}romance                                                 ║
 ║                                                              ║
+║  🛡️ SAFE ROMANCE                                             ║
+║  ──────────────────────────────────────────────────────────   ║
+║  ${p}boobs                                                   ║
+║  ${p}sabakiss                                                ║
+║  ${p}kiss                                                    ║
+║  ${p}love                                                    ║
+║  ${p}anal                                                    ║
+║  ${p}sababoobs                                               ║
+║                                                              ║
 ║  💕 COUPLE (Arslan × Saba)                                   ║
 ║  ──────────────────────────────────────────────────────────   ║
 ║  ${p}couple                                                  ║

@@ -38,6 +38,35 @@ module.exports = {
      * .saba – Saba ka profile
      */
     saba: async (ctx) => {
+        const subcommand = (ctx.args[0] || '').toLowerCase();
+        if (subcommand === 'kiss') {
+            await ctx.react('💋');
+            await ctx.sock.sendMessage(
+                ctx.from,
+                {
+                    text: '💋 Saba ke liye ek respectful virtual kiss — hamesha consent aur boundaries ka khayal rakhein.'
+                },
+                { quoted: ctx.msg }
+            );
+            await ctx.react('✅');
+            fancyLog('LOVE', 'Respectful Saba kiss sent');
+            return;
+        }
+
+        if (subcommand === 'boobs') {
+            await ctx.react('🛡️');
+            await ctx.sock.sendMessage(
+                ctx.from,
+                {
+                    text: '🛡️ Saba ke baare mein sirf respectful compliments share kiye ja sakte hain — private ya sexual content nahi.'
+                },
+                { quoted: ctx.msg }
+            );
+            await ctx.react('✅');
+            fancyLog('LOVE', 'Safe response sent for Saba body-content command');
+            return;
+        }
+
         await ctx.react('👸');
         await ctx.sock.sendMessage(
             ctx.from,
