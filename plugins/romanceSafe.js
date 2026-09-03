@@ -35,6 +35,17 @@ module.exports = {
         );
     },
 
+    // .kiss – affectionate, non-explicit response
+    kiss: async (ctx) => {
+        const target = ctx.args.join(' ') || 'you';
+        await reply(
+            ctx,
+            '💋',
+            `💋 ${target} ko ek respectful virtual kiss — consent aur boundaries ka khayal rakhein.`,
+            `Respectful kiss sent to ${target}`
+        );
+    },
+
     // .love – clean love message
     love: async (ctx) => {
         const target = ctx.args.join(' ') || 'doston';
