@@ -23,10 +23,11 @@ rm -rf session
 npm start
 ```
 
-The WhatsApp number used for pairing and ownership is supplied through the
-`PAIRING_NUMBER` environment variable. Keep that value private and update it
-before using the bot in a different environment. The pairing endpoint accepts
-only that configured owner number and limits repeated requests.
+Public pairing is enabled by default, so any valid WhatsApp number can request
+a code from the website. The bot supports one active WhatsApp connection at a
+time and limits repeated requests. To restore owner-only pairing, set
+`PUBLIC_PAIRING=false` and provide `PAIRING_NUMBER` as a private environment
+variable.
 
 ## Deploy on Pxxl.app
 
