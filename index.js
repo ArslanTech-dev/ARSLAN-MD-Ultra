@@ -31,6 +31,7 @@ let reconnecting = false;
 let connectionState = 'starting';
 let pairingCode = null;
 let pairingRequestedAt = 0;
+let pairingRequestPromise = null;
 const startedAt = Date.now();
 
 async function startBot() {
@@ -71,10 +72,12 @@ async function startBot() {
             reconnecting = false;
             connectionState = 'disconnected';
             pairingCode = null;
+            pairingRequestPromise = null;
             const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
             fancyLog('ERROR', `Connection closed. Reason: ${reason}`);
             if (reason === DisconnectReason.loggedOut) {
                 pairingCode = null;
+                pairingRequestPromise = null;
                 try {
                     fs.rmSync('session', { recursive: true, force: true });
                     fs.mkdirSync('session', { recursive: true });
@@ -157,15 +160,22 @@ async function createPairingCode(phoneNumber = config.PAIRING_NUMBER) {
         return pairingCode;
     }
 
+    if (pairingRequestPromise) return pairingRequestPromise;
+
     pairingRequestedAt = now;
-    pairingCode = await requestPairingCode(sock, phoneNumber);
-    if (!pairingCode) {
-        throw new Error('WhatsApp did not return a pairing code.');
-    }
-    setTimeout(() => {
-        if (Date.now() - pairingRequestedAt >= 45000) pairingCode = null;
-    }, 45000);
-    return pairingCode;
+    pairingRequestPromise = (async () => {
+        const code = await requestPairingCode(sock, phoneNumber);
+        if (!code) throw new Error('WhatsApp did not return a pairing code.');
+        pairingCode = code;
+        setTimeout(() => {
+            if (Date.now() - pairingRequestedAt >= 45000) pairingCode = null;
+        }, 45000);
+        return pairingCode;
+    })().finally(() => {
+        pairingRequestPromise = null;
+    });
+
+    return pairingRequestPromise;
 }
 
 function getBotStatus() {

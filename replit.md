@@ -12,7 +12,16 @@ node server.js
 The bot requires Node.js 20 or newer. On first start, copy the pairing code
 from the pairing page into WhatsApp under **Linked devices**. The page is
 served on port 5000. The linked session is stored in the local `session/`
-directory.
+directory. The pairing helper uses the current Baileys auth flow with
+readiness retries and diagnostics for passkey/WebAuthn challenges.
+
+If WhatsApp reports that the saved session is invalid, remove the local
+session directory and restart the bot to generate a fresh pairing code:
+
+```bash
+rm -rf session
+npm start
+```
 
 The WhatsApp number used for pairing and ownership is supplied through the
 `PAIRING_NUMBER` environment variable. Keep that value private and update it
