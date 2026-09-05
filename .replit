@@ -37,9 +37,13 @@ waitForPort = 5000
 
 [[ports]]
 localPort = 5000
-externalPort = 5000
+externalPort = 80
 
 [userenv]
 
 [userenv.shared]
 PAIRING_NUMBER = "923037314690"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
