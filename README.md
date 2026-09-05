@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=slice&color=0:000000,100:00ff41&height=220&section=header&text=ARSLAN-MD-ULTRA&fontSize=55&fontColor=00ff41&animation=twinkling&fontAlignY=38&desc=%3C%20SYSTEM%20BREACHED%20%7C%20WHATSAPP%20AUTOMATION%20ONLINE%20%3E&descAlignY=62&descAlign=50&descSize=18" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=260&section=header&text=ARSLAN-MD-ULTRA&fontSize=58&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Next-Gen%20WhatsApp%20Multi-Device%20Automation%20Bot&descAlignY=58&descAlign=50&descSize=19" width="100%" alt="ARSLAN-MD-ULTRA"/>
 
-<img src="https://readme-typing-svg.demolab.com/?lines=%3E+Initializing+ARSLAN-MD-ULTRA...;%3E+Access+Granted+%E2%9C%93;%3E+Loading+Modules+%5B%23%23%23%23%23%23%23%23%23%23%5D+100%25;%3E+WhatsApp+Multi-Device+Core+Online;%3E+Powered+by+ARSLAN+TECH%27S+%F0%9F%92%80&font=Fira+Code&center=true&width=750&height=50&color=00FF41&vCenter=true&size=22&pause=900&background=000000"/>
+<img src="https://readme-typing-svg.demolab.com/?lines=%F0%9F%9A%80+Welcome+to+ARSLAN-MD-ULTRA;%E2%9A%A1+Fast+%7C+%F0%9F%A7%A9+Modular+%7C+%F0%9F%9B%A1%EF%B8%8F+Reliable;%F0%9F%92%AC+WhatsApp+Automation%2C+Reimagined;%F0%9F%94%A5+Crafted+by+ARSLAN+TECH%27S&font=Fira+Code&center=true&width=780&height=55&color=6C63FF&vCenter=true&size=24&pause=1000&background=0D111700" alt="Animated project introduction"/>
 
 <br/>
 
@@ -10,253 +10,254 @@
 
 <br/><br/>
 
-![Made with Love](https://img.shields.io/badge/Made%20With-%E2%9D%A4%EF%B8%8F-black?style=for-the-badge&labelColor=000000)
-![Node.js](https://img.shields.io/badge/Node.js-Powered-00ff41?style=for-the-badge&logo=node.js&logoColor=black&labelColor=000000)
-![WhatsApp](https://img.shields.io/badge/WhatsApp-Multi--Device-00ff41?style=for-the-badge&logo=whatsapp&logoColor=black&labelColor=000000)
-![License](https://img.shields.io/badge/License-MIT-00ff41?style=for-the-badge&labelColor=000000)
-![Status](https://img.shields.io/badge/STATUS-ONLINE-00ff41?style=for-the-badge&labelColor=000000)
+<img src="https://skillicons.dev/icons?i=nodejs,js,npm,git,github,vscode&theme=dark" alt="Technology stack"/>
 
-![Stars](https://img.shields.io/github/stars/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
-![Forks](https://img.shields.io/github/forks/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
-![Issues](https://img.shields.io/github/issues/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
-![Last Commit](https://img.shields.io/github/last-commit/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=00ff41&labelColor=000000&logo=github)
+<br/><br/>
 
-<img src="https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake-dark.svg" width="600"/>
+![Made with Love](https://img.shields.io/badge/Made%20With-%E2%9D%A4%EF%B8%8F-6C63FF?style=for-the-badge&labelColor=0D1117)
+![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white&labelColor=0D1117)
+![WhatsApp](https://img.shields.io/badge/WhatsApp-Multi--Device-25D366?style=for-the-badge&logo=whatsapp&logoColor=white&labelColor=0D1117)
+![License](https://img.shields.io/badge/License-MIT-6C63FF?style=for-the-badge&labelColor=0D1117)
+![Public Pairing](https://img.shields.io/badge/Pairing-Public-00C853?style=for-the-badge&labelColor=0D1117)
 
-<img src="https://media.giphy.com/media/2jjWFxHNKaqNS/giphy.gif" width="420"/>
+![Stars](https://img.shields.io/github/stars/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=6C63FF&labelColor=0D1117&logo=github)
+![Forks](https://img.shields.io/github/forks/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=6C63FF&labelColor=0D1117&logo=github)
+![Last Commit](https://img.shields.io/github/last-commit/ArslanTech-dev/ARSLAN-MD-Ultra?style=for-the-badge&color=6C63FF&labelColor=0D1117&logo=github)
+
+<br/>
+
+<img src="https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake-dark.svg" width="600" alt="GitHub contribution animation"/>
 
 </div>
 
 ---
 
-## 💀 About The Project
+## 🌌 About The Project
 
-```bash
-root@arslan-tech:~$ whoami
-> ARSLAN-MD-ULTRA — a next-gen WhatsApp Multi-Device Bot
+**ARSLAN-MD-ULTRA** is a fast, modular WhatsApp Multi-Device automation bot built with Node.js and Baileys. It combines a plugin-based command system, resilient session recovery, a browser pairing console, and deployment-ready server configuration.
 
-root@arslan-tech:~$ status
-> ⚡ Fast   🛡️ Stable   🧩 Modular   🔥 Feature-Packed
+<div align="center">
+<img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="440" alt="Animated coding graphic"/>
+</div>
+
+```yaml
+Project:      ARSLAN-MD-ULTRA
+Category:     WhatsApp Automation Bot
+Language:     JavaScript (Node.js)
+Architecture: Modular Plugin-Based System
+Runtime:      Node.js 20+
+Deployment:   VM | VPS | Persistent Web Service
+Pairing:      Public pairing console
 ```
 
-**ARSLAN-MD-ULTRA** 🖥️ is a powerful, blazing-fast, and feature-rich **WhatsApp Multi-Device Bot** built with Node.js — engineered like a proper hacking toolkit: modular, clean, and built to run silent and smooth in the background. No fluff, just raw automation power. 💚
-
-<div align="center">
-<img src="https://media.giphy.com/media/Rkoat5KMaZC7bh9DDZ/giphy.gif" width="480"/>
-</div>
-
 ---
 
-## ⚡ Features
+## ✨ Features
 
 <div align="center">
 
-| 🎯 Module | 📋 Function |
+| 🎯 Module | 📋 Description |
 |---|---|
-| 🖥️ **Multi-Device Core** | Fully compatible with WhatsApp's latest multi-device protocol |
-| 🧩 **Plugin System** | Modular `plugins/` architecture — inject new commands like exploits |
-| 🔑 **Pairing Code Access** | Authenticate instantly via `pair.js` — no repeated QR scans |
-| ⚙️ **Command Engine** | Clean routing via `command.js` & `handlers.js` |
-| 📡 **Live Logging** | Real-time terminal logs via `logger.js` |
-| ♻️ **Self-Healing Process** | Auto-restart with `ecosystem.config.js` (PM2) |
-| ☁️ **Cloud Deployable** | `Procfile` ready for instant Heroku/host deployment |
-| 🧠 **Full Config Control** | Customize everything through `config.js` |
-| 🆓 **Open Source** | MIT licensed — fork it, mod it, own it |
+| 📱 **Multi-Device Core** | Baileys-powered WhatsApp multi-device connection |
+| 🌐 **Public Pairing Website** | Any valid WhatsApp number can request a pairing code |
+| 🧩 **Plugin System** | Add commands inside the `plugins/` directory |
+| 🔑 **Pairing Code Login** | Link a WhatsApp account without repeated QR scans |
+| ⚙️ **Command Engine** | Centralized routing through the bot handlers |
+| 📡 **Live Status** | Browser console, `/status`, and `/health` endpoints |
+| ♻️ **Session Recovery** | Invalid sessions are cleared for fresh pairing |
+| 🔁 **Pairing Retry Logic** | Socket readiness delay, retry/backoff, and auth diagnostics |
+| 🧠 **Centralized Config** | Public or owner-only pairing controlled by environment variables |
+| 🆓 **Open Source** | MIT licensed and ready to customize |
 
 </div>
 
 <div align="center">
-<img src="https://media.giphy.com/media/SFgpkFcO0oo9dujiJd/giphy.gif" width="440"/>
+<img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" width="440" alt="Animated feature graphic"/>
 </div>
 
 ---
 
-## 🗂️ System Architecture
+## 🔓 Public Pairing
 
-```bash
-ARSLAN-MD-Ultra/
-├── 📁 plugins/              # Injected modules & commands
-├── 📄 command.js            # Command registration logic
-├── 📄 config.js             # Bot configuration file
-├── 📄 ecosystem.config.js   # PM2 process manager config
-├── 📄 handlers.js           # Event & message handlers
-├── 📄 index.js              # Main entry point
-├── 📄 logger.js             # Logging utility
-├── 📄 pair.js               # Pairing code authentication
-├── 📄 Procfile              # Deployment config (Heroku etc.)
-├── 📄 package.json          # Project dependencies
-└── 📄 License                 # MIT License
+Public pairing is enabled by default. Each deployment supports **one active WhatsApp connection at a time**.
+
+1. Start the bot with `npm start`.
+2. Open the hosted pairing website.
+3. Enter any WhatsApp number with its country code.
+4. Copy the generated pairing code.
+5. In WhatsApp, open **Linked devices → Link with phone number**.
+6. Enter the code and keep the hosting process running.
+
+The account that completes the public pairing becomes the current bot owner. A second account must wait until the current session disconnects or the active pairing request expires.
+
+To restore owner-only pairing:
+
+```env
+PUBLIC_PAIRING=false
+PAIRING_NUMBER=923xxxxxxxxx
 ```
 
 ---
 
-## 🚀 Deployment Sequence
+## 🚀 Getting Started
 
-### 🛡️ Prerequisites
-- 🟢 [Node.js](https://nodejs.org/) v20 or higher
-- 🟢 Git installed on your system
-- 🟢 A WhatsApp account 📱
+### Prerequisites
 
-### 📦 Execute Setup
+- [Node.js](https://nodejs.org/) 20 or newer
+- Git
+- A WhatsApp account
+- A persistent host for the `session/` directory
+
+### Installation
 
 ```bash
-# [1] Clone the repository
 git clone https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra.git
-
-# [2] Enter the directory
 cd ARSLAN-MD-Ultra
-
-# [3] Install dependencies
-npm install
-
-# [4] Configure the system
-# Public pairing is enabled by default. Set PUBLIC_PAIRING=false
-# and PAIRING_NUMBER to restore owner-only pairing.
-
-# [5] Launch
+npm ci
 npm start
 ```
 
-### 🔓 Authentication Protocol
+The pairing website is served by `server.js`. The host should expose the configured `PORT` and bind the application publicly.
 
-1. Run the website-enabled bot using `npm start` 🖥️
-2. Open the pairing website and enter your WhatsApp number ☎️
-3. Click **Get code** and copy the **pairing code** 🔢
-4. Open WhatsApp → **Linked Devices** → **Link with phone number** 📲
-5. Enter the code — **connection established** ✅
+<div align="center">
+<img src="https://media.giphy.com/media/Rkoat5KMaZC7bh9DDZ/giphy.gif" width="440" alt="Animated setup graphic"/>
+</div>
 
-Public pairing accepts any valid WhatsApp number, but this bot maintains one
-active WhatsApp connection at a time. A second request waits until the active
-code expires or the current account disconnects.
+---
 
-The pairing helper uses the current Baileys authentication flow with a short
-socket-readiness delay, retry/backoff handling, and clear diagnostics for
-WhatsApp passkey/WebAuthn challenges. If an old WhatsApp session is invalid,
-reset it before pairing again:
+## ☁️ Deployment
+
+This bot needs a long-running Node.js process, outbound WebSocket access, and persistent storage for `session/`. Use a VM, VPS, or persistent web service—not static hosting or serverless functions.
+
+Recommended settings:
+
+```yaml
+Runtime:        Node.js 20+
+Install:        npm ci
+Start:          node server.js
+Port:           5000 or the host-provided PORT
+Storage:        Persist session/ between restarts
+Pairing:        PUBLIC_PAIRING=true
+```
+
+For a VPS with PM2:
+
+```bash
+npm install -g pm2
+pm2 start server.js --name arslan-md-ultra
+pm2 save
+pm2 startup
+```
+
+Health checks:
+
+```text
+GET /health
+GET /status
+```
+
+<div align="center">
+<img src="https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif" width="480" alt="Animated deployment graphic"/>
+</div>
+
+---
+
+## 🧯 Session Recovery
+
+If WhatsApp reports an invalid or expired session, reset the local credentials and restart:
 
 ```bash
 rm -rf session
 npm start
 ```
 
-<div align="center">
-<img src="https://media.giphy.com/media/26tPplGWjN0xLybiU/giphy.gif" width="420"/>
-</div>
+Never commit the `session/` directory. It contains private WhatsApp authentication credentials and is ignored by Git.
 
 ---
 
-## ☁️ One-Click Deployment
+## 🗂️ Project Structure
 
-<div align="center">
-
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra)
-
-</div>
-
-For persistent VPS deployment — keep the process alive 24/7:
-
-```bash
-npm install -g pm2
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup
+```text
+ARSLAN-MD-Ultra/
+├── public/              # Browser pairing console
+├── plugins/             # Modular commands and features
+├── config.js            # Bot and pairing configuration
+├── handlers.js          # Plugin loading and message dispatch
+├── index.js             # Baileys startup and connection lifecycle
+├── pair.js              # Pairing number validation and retry logic
+├── server.js            # Pairing website and health endpoints
+├── utils/               # Shared utilities and logging
+├── package.json         # Runtime dependencies and scripts
+└── .replit              # Replit VM and workflow configuration
 ```
 
 ---
 
-## 🧩 Injecting Custom Plugins
+## 🧩 Adding Custom Plugins
+
+1. Create a `.js` file inside `plugins/`.
+2. Follow the structure used by the existing plugins.
+3. Restart the bot.
 
 ```bash
-root@arslan-tech:~$ cd plugins/
-root@arslan-tech:~/plugins$ touch myplugin.js
-root@arslan-tech:~/plugins$ nano myplugin.js
-# follow existing plugin structure...
-root@arslan-tech:~/plugins$ pm2 restart all
-> ✅ New module deployed successfully
+touch plugins/myplugin.js
+npm start
 ```
 
-1. Go to the `plugins/` folder 📁
-2. Create a new `.js` file
-3. Follow the existing plugin structure
-4. Restart the bot — new command live instantly 💥
-
----
-
-## 🖼️ Preview
-
 <div align="center">
-<img src="https://media.giphy.com/media/26ufp2gpMpqbcJZWo/giphy.gif" width="480"/>
+<img src="https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif" width="420" alt="Animated plugin graphic"/>
 </div>
 
 ---
 
-## 📊 Repo Stats
+## 🧬 Roadmap
 
-<div align="center">
-
-<img src="https://github-readme-stats.vercel.app/api/pin/?username=ArslanTech-dev&repo=ARSLAN-MD-Ultra&theme=chartreuse-dark" width="400"/>
-
-</div>
+- [x] Modular plugin architecture
+- [x] Pairing-code authentication
+- [x] Public browser pairing
+- [x] Session recovery and health endpoints
+- [x] Persistent VM deployment configuration
+- [ ] Web-based bot control dashboard
+- [ ] Usage analytics panel
+- [ ] Multi-language command support
+- [ ] Role-based command permissions
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are always welcome! 🙌
+Contributions, issues, and feature requests are welcome.
 
-1. 🍴 Fork the repository
-2. 🌿 Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. 💾 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
-5. 🔃 Open a Pull Request
+1. Fork the repository.
+2. Create a feature branch.
+3. Make and test your changes.
+4. Push the branch.
+5. Open a pull request.
 
 ---
 
 ## ⚠️ Disclaimer
 
-This project is **not affiliated with, endorsed by, or connected to WhatsApp Inc. or Meta.** Use responsibly and at your own risk. Automating WhatsApp may violate their Terms of Service.
+This project is **not affiliated with, endorsed by, or connected to WhatsApp Inc. or Meta**. Use responsibly and at your own risk. Automating WhatsApp may violate its Terms of Service.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License** — feel free to use, modify, and distribute with proper credit. 📄✅
-
----
-
-## 👤 Author & Contact
-
-<div align="center">
-
-<img src="https://files.catbox.moe/0w1hu5.jpg" width="150" style="border-radius:50%"/>
-
-```bash
-root@arslan-tech:~$ whoami
-> ARSLAN 🇵🇰
-root@arslan-tech:~$ contact --info
-> 📧 arslanchkpt@gmail.com
-> 📱 +92 308 4991001
-> 🔗 github.com/ArslanTech-dev
-```
-
-<img src="https://media.giphy.com/media/xUOxfjsMlI9bLvpiQU/giphy.gif" width="150"/>
-
-</div>
+This project is licensed under the **MIT License**. You may use, modify, and distribute it with proper credit.
 
 ---
 
 <div align="center">
 
-## ⭐ Support The Mission
+## ⭐ Support The Project
 
-If this project helped you, **star the repo** ⭐ — it keeps the mission running!
+If ARSLAN-MD-ULTRA helped you, consider starring the repository.
 
-<img src="https://media.giphy.com/media/g9582DNuQppxC/giphy.gif" width="190"/>
+<img src="https://readme-typing-svg.demolab.com/?lines=Thanks+for+visiting+the+project+%F0%9F%92%9C;Star+%E2%AD%90+if+you+like+it%21;Let's+build+something+amazing+together+%F0%9F%9A%80&font=Fira+Code&center=true&width=620&height=42&color=6C63FF&vCenter=true&size=19&pause=1000&background=0D111700" alt="Animated closing message"/>
 
-<img src="https://readme-typing-svg.demolab.com/?lines=Thanks+for+visiting+the+mainframe+%F0%9F%92%9A;Star+%E2%AD%90+if+you+like+it%21;Stay+connected...+see+you+next+update+%F0%9F%9A%80&font=Fira+Code&center=true&width=550&height=40&color=00FF41&vCenter=true&size=18&pause=1000&background=000000"/>
+### 🔥 Powered by **ARSLAN TECH'S** 🔥
 
-### 💀 Powered by **ARSLAN TECH'S** 💀
-
-<img src="https://capsule-render.vercel.app/api?type=slice&color=0:00ff41,100:000000&height=150&section=footer&animation=twinkling" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=150&section=footer" width="100%" alt="Animated footer"/>
 
 </div>
