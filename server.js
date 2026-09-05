@@ -74,6 +74,7 @@ const server = http.createServer(async (req, res) => {
                 service: 'arslan-md-ultra',
                 state: status.state,
                 connected: status.connected,
+                publicPairing: status.publicPairing,
                 uptimeSeconds: status.uptimeSeconds,
             });
         }
@@ -99,7 +100,7 @@ const server = http.createServer(async (req, res) => {
                     error: 'Enter a valid WhatsApp number with country code.',
                 });
             }
-            if (!configuredPhone || phone !== configuredPhone) {
+            if (!config.PUBLIC_PAIRING && (!configuredPhone || phone !== configuredPhone)) {
                 return sendJson(res, 403, {
                     success: false,
                     error: 'Pairing is restricted to the configured owner number.',
@@ -120,9 +121,12 @@ const server = http.createServer(async (req, res) => {
         res.end('Not found');
     } catch (err) {
         fancyLog('ERROR', `Web request failed: ${err.message}`);
-        return sendJson(res, 500, {
+        const status = err.code === 'PAIRING_BUSY' || /already connected/i.test(err.message)
+            ? 409
+            : 500;
+        return sendJson(res, status, {
             success: false,
-            error: 'The pairing service is temporarily unavailable.',
+            error: status === 409 ? err.message : 'The pairing service is temporarily unavailable.',
         });
     }
 });
