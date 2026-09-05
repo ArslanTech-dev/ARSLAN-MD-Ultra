@@ -31,6 +31,7 @@ let reconnecting = false;
 let connectionState = 'starting';
 let pairingCode = null;
 let pairingRequestedAt = 0;
+const startedAt = Date.now();
 
 async function startBot() {
     if (reconnecting) return;
@@ -168,10 +169,15 @@ async function createPairingCode(phoneNumber = config.PAIRING_NUMBER) {
 }
 
 function getBotStatus() {
+    const uptimeSeconds = Math.floor((Date.now() - startedAt) / 1000);
     return {
+        name: global.BOT_NAME,
+        version: global.VERSION,
         state: connectionState,
         connected: connectionState === 'connected' && Boolean(sock?.user),
         pairingAvailable: connectionState !== 'disconnected' && Boolean(sock && !sock.user),
+        uptimeSeconds,
+        nodeVersion: process.versions.node,
     };
 }
 

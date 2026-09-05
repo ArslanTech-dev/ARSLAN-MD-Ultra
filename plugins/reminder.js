@@ -1,7 +1,7 @@
 // plugins/reminder.js
 const { fancyLog } = require('../utils/logger');
 
-const reminders = [];
+let reminders = [];
 
 module.exports = {
     remind: async (ctx) => {

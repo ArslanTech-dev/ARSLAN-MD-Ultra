@@ -14,8 +14,22 @@ function sendJson(res, status, body) {
     res.writeHead(status, {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'same-origin',
     });
     res.end(JSON.stringify(body));
+}
+
+function sendPage(res) {
+    res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'same-origin',
+    });
+    res.end(indexPage);
 }
 
 function getClientKey(req) {
@@ -41,11 +55,7 @@ function readBody(req) {
 const server = http.createServer(async (req, res) => {
     try {
         if (req.method === 'GET' && req.url === '/') {
-            res.writeHead(200, {
-                'Content-Type': 'text/html; charset=utf-8',
-                'Cache-Control': 'no-store',
-            });
-            return res.end(indexPage);
+            return sendPage(res);
         }
 
         if (req.method === 'GET' && req.url === '/favicon.ico') {
@@ -55,6 +65,17 @@ const server = http.createServer(async (req, res) => {
 
         if (req.method === 'GET' && req.url === '/status') {
             return sendJson(res, 200, getBotStatus());
+        }
+
+        if (req.method === 'GET' && req.url === '/health') {
+            const status = getBotStatus();
+            return sendJson(res, 200, {
+                ok: true,
+                service: 'arslan-md-ultra',
+                state: status.state,
+                connected: status.connected,
+                uptimeSeconds: status.uptimeSeconds,
+            });
         }
 
         if (req.method === 'POST' && req.url === '/pair') {
