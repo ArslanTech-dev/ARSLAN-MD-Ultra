@@ -144,7 +144,7 @@ ARSLAN-MD-Ultra/
 <img src="https://skillicons.dev/icons?i=nodejs,git,github&theme=dark" />
 </div>
 
-- 🟢 [Node.js](https://nodejs.org/) v18 or higher
+- 🟢 [Node.js](https://nodejs.org/) v26 or higher
 - 🟢 Git installed on your system
 - 🟢 A WhatsApp account
 
