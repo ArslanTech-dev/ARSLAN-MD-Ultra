@@ -110,7 +110,8 @@ cd ARSLAN-MD-Ultra
 npm install
 
 # [4] Configure the system
-# Set the PAIRING_NUMBER environment variable with your country code
+# Public pairing is enabled by default. Set PUBLIC_PAIRING=false
+# and PAIRING_NUMBER to restore owner-only pairing.
 
 # [5] Launch
 npm start
@@ -123,6 +124,10 @@ npm start
 3. Click **Get code** and copy the **pairing code** 🔢
 4. Open WhatsApp → **Linked Devices** → **Link with phone number** 📲
 5. Enter the code — **connection established** ✅
+
+Public pairing accepts any valid WhatsApp number, but this bot maintains one
+active WhatsApp connection at a time. A second request waits until the active
+code expires or the current account disconnects.
 
 The pairing helper uses the current Baileys authentication flow with a short
 socket-readiness delay, retry/backoff handling, and clear diagnostics for
