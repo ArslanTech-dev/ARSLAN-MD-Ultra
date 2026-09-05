@@ -1,4 +1,5 @@
 const pairingNumber = String(process.env.PAIRING_NUMBER || '').replace(/\D/g, '');
+const publicPairing = String(process.env.PUBLIC_PAIRING ?? 'true').toLowerCase() !== 'false';
 
 module.exports = {
     PREFIX: '.',
@@ -8,6 +9,7 @@ module.exports = {
     OWNER_NAME: 'ARSLAN TECH\'S',
     VERSION: '4.0.0',
     PAIRING_NUMBER: pairingNumber,   // supplied through the PAIRING_NUMBER environment variable
+    PUBLIC_PAIRING: publicPairing,   // set PUBLIC_PAIRING=false to restore owner-only pairing
     ANTI_CALL: true,
     ANTI_DELETE: false,
     AUTO_BLOCK_CALL: false,
