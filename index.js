@@ -31,6 +31,7 @@ let reconnecting = false;
 let connectionState = 'starting';
 let pairingCode = null;
 let pairingRequestedAt = 0;
+let pairingPhoneNumber = null;
 let pairingRequestPromise = null;
 const startedAt = Date.now();
 
@@ -61,10 +62,14 @@ async function startBot() {
         // ---------- PAIRING CODE (using pair.js) ----------
         if (update.qr) {
             connectionState = 'pairing';
-            try {
-                await createPairingCode(config.PAIRING_NUMBER);
-            } catch (err) {
-                fancyLog('ERROR', `Pairing failed: ${err.message}`);
+            if (config.PAIRING_NUMBER && !config.PUBLIC_PAIRING) {
+                try {
+                    await createPairingCode(config.PAIRING_NUMBER);
+                } catch (err) {
+                    fancyLog('ERROR', `Pairing failed: ${err.message}`);
+                }
+            } else if (config.PUBLIC_PAIRING) {
+                fancyLog('INFO', 'Public pairing is ready; request a code from the pairing website.');
             }
         }
 
@@ -72,11 +77,13 @@ async function startBot() {
             reconnecting = false;
             connectionState = 'disconnected';
             pairingCode = null;
+            pairingPhoneNumber = null;
             pairingRequestPromise = null;
             const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
             fancyLog('ERROR', `Connection closed. Reason: ${reason}`);
             if (reason === DisconnectReason.loggedOut) {
                 pairingCode = null;
+                pairingPhoneNumber = null;
                 pairingRequestPromise = null;
                 try {
                     fs.rmSync('session', { recursive: true, force: true });
@@ -94,11 +101,19 @@ async function startBot() {
             reconnecting = false;
             connectionState = 'connected';
             pairingCode = null;
+            pairingPhoneNumber = null;
+            pairingRequestPromise = null;
+            if (config.PUBLIC_PAIRING && sock.user?.id) {
+                const connectedId = String(sock.user.id).split(':')[0];
+                config.OWNER = [connectedId.includes('@') ? connectedId : `${connectedId}@s.whatsapp.net`];
+                global.OWNER = config.OWNER;
+                fancyLog('INFO', `Public pairing owner set to ${config.OWNER[0]}`);
+            }
             fancyLog('SUCCESS', `${global.BOT_NAME} Connected!`);
 
             // ---------- WELCOME MESSAGE TO OWNER ----------
             const ownerJid = config.OWNER[0];
-            if (ownerJid) {
+            if (ownerJid && !config.PUBLIC_PAIRING) {
                 try {
                     await sock.sendMessage(ownerJid, {
                         text: `╭─⬡ *${global.BOT_NAME} ONLINE* ⬡─╮
@@ -157,18 +172,32 @@ async function createPairingCode(phoneNumber = config.PAIRING_NUMBER) {
 
     const now = Date.now();
     if (pairingCode && now - pairingRequestedAt < 45000) {
-        return pairingCode;
+        const requestedNumber = String(phoneNumber || '').replace(/\D/g, '');
+        if (requestedNumber === pairingPhoneNumber) return pairingCode;
+        const busyError = new Error('Another pairing code is active. Please wait up to 45 seconds before trying a different number.');
+        busyError.code = 'PAIRING_BUSY';
+        throw busyError;
     }
 
-    if (pairingRequestPromise) return pairingRequestPromise;
+    if (pairingRequestPromise) {
+        const requestedNumber = String(phoneNumber || '').replace(/\D/g, '');
+        if (requestedNumber === pairingPhoneNumber) return pairingRequestPromise;
+        const busyError = new Error('Another pairing request is already in progress. Please wait a moment and try again.');
+        busyError.code = 'PAIRING_BUSY';
+        throw busyError;
+    }
 
+    pairingPhoneNumber = String(phoneNumber || '').replace(/\D/g, '');
     pairingRequestedAt = now;
     pairingRequestPromise = (async () => {
         const code = await requestPairingCode(sock, phoneNumber);
         if (!code) throw new Error('WhatsApp did not return a pairing code.');
         pairingCode = code;
         setTimeout(() => {
-            if (Date.now() - pairingRequestedAt >= 45000) pairingCode = null;
+            if (Date.now() - pairingRequestedAt >= 45000) {
+                pairingCode = null;
+                pairingPhoneNumber = null;
+            }
         }, 45000);
         return pairingCode;
     })().finally(() => {
@@ -186,6 +215,7 @@ function getBotStatus() {
         state: connectionState,
         connected: connectionState === 'connected' && Boolean(sock?.user),
         pairingAvailable: connectionState !== 'disconnected' && Boolean(sock && !sock.user),
+        publicPairing: config.PUBLIC_PAIRING,
         uptimeSeconds,
         nodeVersion: process.versions.node,
     };
