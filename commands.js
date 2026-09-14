@@ -18,7 +18,7 @@ function getUptime() {
 }
 
 function getTotalCommands() {
-    return '280+';
+    return '400+';
 }
 
 function getTextLogo() {
