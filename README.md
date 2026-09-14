@@ -52,6 +52,37 @@ Pairing:      Public pairing console
 
 ---
 
+## 💻 Code in Action
+
+<div align="center">
+<img src="https://readme-typing-svg.demolab.com/?lines=%24+npm+start;%3E+Initializing+Baileys+socket...;%3E+Loading+plugins+%5B%23%23%23%23%23%23%23%23%23%23%5D+100%25;%3E+Connection+established+%E2%9C%93;%3E+ARSLAN-MD-ULTRA+is+online+%F0%9F%9F%A2&font=Fira+Code&center=true&width=780&height=50&color=00FF9D&vCenter=true&size=20&pause=800&background=0D1117" alt="Terminal boot animation"/>
+</div>
+
+```javascript
+// index.js — Baileys connection lifecycle
+const { makeWASocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
+const { loadPlugins } = require('./handlers');
+
+async function startBot() {
+  const { state, saveCreds } = await useMultiFileAuthState('session');
+  const sock = makeWASocket({ auth: state });
+
+  sock.ev.on('creds.update', saveCreds);
+  sock.ev.on('connection.update', handleConnection);
+
+  await loadPlugins(sock);
+  console.log('✅ ARSLAN-MD-ULTRA is online');
+}
+
+startBot();
+```
+
+<div align="center">
+<img src="https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif" width="440" alt="Animated code graphic"/>
+</div>
+
+---
+
 ## ✨ Features
 
 <div align="center">
@@ -109,6 +140,10 @@ PAIRING_NUMBER=923xxxxxxxxx
 - A persistent host for the `session/` directory
 
 ### Installation
+
+<div align="center">
+<img src="https://readme-typing-svg.demolab.com/?lines=%24+git+clone+github.com%2FArslanTech-dev%2FARSLAN-MD-Ultra.git;%24+cd+ARSLAN-MD-Ultra;%24+npm+ci;%24+npm+start;%E2%9C%85+Setup+complete&font=Fira+Code&center=true&width=780&height=45&color=00FF9D&vCenter=true&size=17&pause=900&background=0D1117" alt="Installation terminal animation"/>
+</div>
 
 ```bash
 git clone https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra.git
@@ -195,6 +230,10 @@ ARSLAN-MD-Ultra/
 
 ## 🧩 Adding Custom Plugins
 
+<div align="center">
+<img src="https://readme-typing-svg.demolab.com/?lines=%24+touch+plugins%2Fmyplugin.js;%24+npm+start;%E2%9C%85+New+command+loaded+successfully&font=Fira+Code&center=true&width=700&height=40&color=00FF9D&vCenter=true&size=16&pause=900&background=0D1117" alt="Plugin terminal animation"/>
+</div>
+
 1. Create a `.js` file inside `plugins/`.
 2. Follow the structure used by the existing plugins.
 3. Restart the bot.
@@ -245,6 +284,41 @@ This project is **not affiliated with, endorsed by, or connected to WhatsApp Inc
 ## 📜 License
 
 This project is licensed under the **MIT License**. You may use, modify, and distribute it with proper credit.
+
+---
+
+## 👤 About the Developer
+
+<div align="center">
+
+<img src="https://github.com/ArslanTech-dev.png" width="150" style="border-radius:50%; border:4px solid #6C63FF"/>
+
+<img src="https://readme-typing-svg.demolab.com/?lines=Hi+%F0%9F%91%8B%2C+I'm+Arslan;AI+Assistant+Programmer+%F0%9F%A4%96;AI+Developer+%F0%9F%A7%A0;Bots+Developer+%E2%9A%99%EF%B8%8F&font=Fira+Code&center=true&width=600&height=45&color=6C63FF&vCenter=true&size=20&pause=1000&background=0D111700" alt="Developer typing bio"/>
+
+</div>
+
+```yaml
+Name:       Arslan
+Age:        17
+Country:    🇵🇰 Pakistan
+City:       Bahawalpur
+Education:  ICS — Punjab College, Hasilpur
+Roles:      AI Assistant Programmer | AI Developer | Bots Developer
+Goal:       AI/ML Engineer @ Microsoft / Google
+Brand:      ARSLAN TECH'S
+```
+
+<div align="center">
+
+📧 **Email:** arslanchkpt@gmail.com
+📱 **Contact:** +92 308 4991001
+🔗 **GitHub:** [@ArslanTech-dev](https://github.com/ArslanTech-dev)
+
+[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:arslanchkpt@gmail.com)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/923084991001)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ArslanTech-dev)
+
+</div>
 
 ---
 
