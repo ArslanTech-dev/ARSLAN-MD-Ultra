@@ -6,7 +6,7 @@
 
 <br/>
 
-<img src="https://files.catbox.moe/0w1hu5.jpg" width="100%" alt="ARSLAN MD ULTRA Banner"/>
+<img src="./assets/IMG-20260805-WA0005.jpg" width="100%" alt="ARSLAN MD ULTRA Banner"/>
 
 <br/><br/>
 
@@ -260,6 +260,22 @@ npm start
 - [ ] Usage analytics panel
 - [ ] Multi-language command support
 - [ ] Role-based command permissions
+
+---
+
+## 📸 Gallery
+
+<div align="center">
+
+<img src="./assets/IMG-20260915-WA3151.jpg" width="45%" style="border-radius:10px" alt="Gallery image 1"/>
+<img src="./assets/IMG-20260915-WA7105.jpg" width="45%" style="border-radius:10px" alt="Gallery image 2"/>
+
+<br/><br/>
+
+<img src="./assets/IMG-20260915-WA7636.jpg" width="45%" style="border-radius:10px" alt="Gallery image 3"/>
+<img src="./assets/deno.jpg" width="45%" style="border-radius:10px" alt="Gallery image 4"/>
+
+</div>
 
 ---
 
