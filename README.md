@@ -273,7 +273,7 @@ npm start
 <br/><br/>
 
 <img src="./assets/IMG-20260915-WA7636.jpg" width="45%" style="border-radius:10px" alt="Gallery image 3"/>
-<img src="./assets/deno.jpg" width="45%" style="border-radius:10px" alt="Gallery image 4"/>
+
 
 </div>
 
