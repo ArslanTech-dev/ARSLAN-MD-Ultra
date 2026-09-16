@@ -289,6 +289,7 @@ Contributions, issues, and feature requests are welcome.
 4. Push the branch.
 5. Open a pull request.
 
+<img src="./assets/IMG-20260915-WA7636.jpg" width="45%" style="border-radius:10px" alt="Gallery image 3"/>
 ---
 
 ## ⚠️ Disclaimer
