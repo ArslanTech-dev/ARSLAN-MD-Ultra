@@ -1,0 +1,394 @@
+// plugins/ai.js
+// AI Chatbot – Har user ke liye (Self-Attaching)
+// OpenAI GPT with memory
+// Roman Urdu | Powered by ARSLAN TECH'S
+
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const { fancyLog } = require('../utils/logger');
+const cache = require('../utils/cache');
+
+// ─── Configuration ───────────────────────────────
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'YOUR_OPENAI_KEY';
+const OPENAI_MODEL = 'gpt-4o-mini';
+const OPENAI_API = 'https://api.openai.com/v1/chat/completions';
+
+// ─── Data Path ───────────────────────────────────
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const AI_FILE = path.join(DATA_DIR, 'ai_chats.json');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+let aiChats = {};
+try {
+    if (fs.existsSync(AI_FILE)) aiChats = JSON.parse(fs.readFileSync(AI_FILE, 'utf8'));
+} catch (e) {
+    fancyLog('ERROR', `AI chats load: ${e.message}`);
+}
+
+function saveChats() {
+    try {
+        fs.writeFileSync(AI_FILE, JSON.stringify(aiChats, null, 2));
+    } catch (e) {
+        fancyLog('ERROR', `AI save: ${e.message}`);
+    }
+}
+
+// ─── Auto-Reply State (Global) ───────────────────
+let autoReplyEnabled = true;    // ON by default for all
+const userEnabled = {};          // Per-user override
+
+// ─── System Prompt ───────────────────────────────
+const SYSTEM_PROMPT = `Tum "ARSLAN MD AI" ho — Arslan Tech's ka friendly AI assistant.
+
+Maloomat:
+- Tum Arslan (17 saal, Bahawalpur, Pakistan) ne banaya hai
+- Arslan ka khwab: ML/AI Engineer banna
+- Arslan ki jaan: Saba 🤎
+- Arslan ka bot: ARSLAN MD ULTRA (400+ commands)
+
+Personality:
+- Roman Urdu mein jawab do (agar user Roman Urdu mein likhe)
+- English mein likhe to English mein
+- Friendly, helpful, thora funny ho
+- 2-3 lines max
+- Kam az kam 1 emoji
+- Chota aur clear jawab
+
+Rules:
+- Har user se izzat se baat karo
+- Gandi baat pe saaf mana karo
+- Islamic sawal ka sahi jawab do
+- Kuch nahi pata ho to "mujhe nahi pata" bolo
+- Kisi ko bura mat bolo
+
+Special:
+- Arslan ka zikr izzat se karo
+- Saba ka zikr sirf izzat se
+- Bot ke baare mein acha bolo
+
+Aaj: ${new Date().toLocaleDateString('en-PK')}`;
+
+// ─── API Key Check ───────────────────────────────
+function hasValidKey() {
+    return OPENAI_API_KEY &&
+           OPENAI_API_KEY.startsWith('sk-') &&
+           OPENAI_API_KEY !== 'YOUR_OPENAI_KEY' &&
+           OPENAI_API_KEY.length > 20;
+}
+
+// ─── Get AI Response ─────────────────────────────
+async function getAIResponse(userId, userMessage) {
+    if (!aiChats[userId]) {
+        aiChats[userId] = { messages: [], created: Date.now(), totalMsgs: 0 };
+    }
+
+    const userChat = aiChats[userId];
+
+    const messages = [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...userChat.messages.slice(-10),
+        { role: 'user', content: userMessage }
+    ];
+
+    const response = await axios.post(
+        OPENAI_API,
+        {
+            model: OPENAI_MODEL,
+            messages,
+            max_tokens: 300,
+            temperature: 0.8,
+            presence_penalty: 0.3
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            timeout: 30000
+        }
+    );
+
+    const reply = response.data.choices[0].message.content;
+    const tokens = response.data.usage.total_tokens;
+
+    userChat.messages.push(
+        { role: 'user', content: userMessage },
+        { role: 'assistant', content: reply }
+    );
+
+    if (userChat.messages.length > 20) {
+        userChat.messages = userChat.messages.slice(-20);
+    }
+
+    userChat.totalMsgs++;
+    userChat.lastActive = Date.now();
+    saveChats();
+
+    return { reply, tokens };
+}
+
+// ─── Emojis ──────────────────────────────────────
+const emojis = ['🤖', '🧠', '✨', '💫', '🎯', '💚', '🌟', '🔥', '💡', '🤲'];
+
+// ═══════════════════════════════════════════════════
+// AUTO-ATTACH LISTENER (No other file change!)
+// ═══════════════════════════════════════════════════
+let listenerAttached = false;
+
+function attachListener() {
+    if (listenerAttached) return;
+
+    const sock = global.sock || global.socket || global.waSocket;
+
+    if (!sock || !sock.ev) {
+        setTimeout(attachListener, 2000);
+        return;
+    }
+
+    listenerAttached = true;
+    fancyLog('AI', '🎯 AI listener attached (all users)!');
+
+    sock.ev.on('messages.upsert', async (m) => {
+        try {
+            const msg = m.messages[0];
+            if (!msg?.message) return;
+            if (msg.key.fromMe) return;
+
+            const from = msg.key.remoteJid;
+            if (!from) return;
+
+            // Groups: skip (only private chats)
+            if (from.endsWith('@g.us')) return;
+
+            // Global toggle off?
+            if (!autoReplyEnabled) return;
+
+            // Per-user toggle
+            if (userEnabled[from] === false) return;
+
+            // Extract text
+            const type = Object.keys(msg.message)[0];
+            const body = msg.message.conversation ||
+                         msg.message.extendedTextMessage?.text ||
+                         msg.message[type]?.text || '';
+
+            const config = require('../config');
+            const prefix = config.PREFIX || '.';
+
+            // Skip commands
+            if (!body || body.startsWith(prefix)) return;
+            if (body.length < 2) return;
+
+            // Cooldown: 5 sec between AI replies (per user)
+            const cooldown = cache.checkCooldown(from, 'autoai', 5);
+            if (cooldown > 0) return;
+
+            if (!hasValidKey()) {
+                fancyLog('WARN', 'AI: No valid OpenAI key');
+                return;
+            }
+
+            // Typing
+            await sock.sendPresenceUpdate('composing', from);
+
+            const { reply } = await getAIResponse(from, body);
+
+            await sock.sendPresenceUpdate('paused', from);
+
+            await sock.sendMessage(from, { text: `🤖 ${reply}` });
+            fancyLog('AI', `Auto-replied to ${from.split('@')[0]}`);
+
+        } catch (err) {
+            fancyLog('ERROR', `AI: ${err.message}`);
+            try {
+                const sock = global.sock;
+                const from = m.messages[0]?.key?.remoteJid;
+                if (sock && from) await sock.sendPresenceUpdate('paused', from);
+            } catch (_) {}
+        }
+    });
+}
+
+attachListener();
+
+// ═══════════════════════════════════════════════════
+// COMMANDS
+// ═══════════════════════════════════════════════════
+module.exports = {
+
+    // ─── .ai <sawal> ─────────────────────────────
+    ai: async (ctx) => {
+        const { sock, msg, from, args, react } = ctx;
+
+        if (!hasValidKey()) {
+            return sock.sendMessage(from, {
+                text: `╭─⬡ ⚠️ *API KEY MISSING* ╡\n` +
+                      `│\n` +
+                      `│  🔑 OPENAI_API_KEY set karo\n` +
+                      `│  📝 Bonto → Environment\n` +
+                      `│\n` +
+                      `╰─────────────────────────╯`
+            }, { quoted: msg });
+        }
+
+        const question = args.join(' ');
+        if (!question) {
+            return sock.sendMessage(from, {
+                text: `❌ Usage: .ai <sawal>\nExample: .ai Mera naam kya hai?`
+            }, { quoted: msg });
+        }
+
+        // Spam check (per user)
+        if (cache.checkSpam(from, 5, 10)) {
+            return sock.sendMessage(from, {
+                text: '🚫 Thora araam karo! 10 sec baad try karo.'
+            }, { quoted: msg });
+        }
+
+        await react('🧠');
+        await sock.sendPresenceUpdate('composing', from);
+
+        try {
+            const start = Date.now();
+            const { reply, tokens } = await getAIResponse(from, question);
+            const time = Date.now() - start;
+
+            await sock.sendPresenceUpdate('paused', from);
+
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+            await sock.sendMessage(from, {
+                text: `╭─⬡ ${emoji} *ARSLAN MD AI* ⬡─╮\n` +
+                      `│\n` +
+                      `│  ❓ ${question.slice(0, 80)}\n` +
+                      `│\n` +
+                      `│  🤖 ${reply}\n` +
+                      `│\n` +
+                      `│  ⚡ ${time}ms | 🎯 ${tokens} tokens\n` +
+                      `│  💚 ARSLAN TECH'S\n` +
+                      `│\n` +
+                      `╰─────────────────────────╯`
+            }, { quoted: msg });
+
+            await react('✅');
+        } catch (err) {
+            await sock.sendPresenceUpdate('paused', from);
+            await react('❌');
+            const errMsg = err.response?.data?.error?.message || err.message;
+            await sock.sendMessage(from, {
+                text: `❌ AI Error: ${errMsg.slice(0, 100)}`
+            }, { quoted: msg });
+        }
+    },
+
+    ask: async (ctx) => { await module.exports.ai(ctx); },
+    chat: async (ctx) => { await module.exports.ai(ctx); },
+
+    // ─── .autochat on/off ────────────────────────
+    autochat: async (ctx) => {
+        const { sock, msg, from, args, react, isOwner } = ctx;
+
+        const cmd = (args[0] || '').toLowerCase();
+
+        // Owner can control global
+        if (isOwner) {
+            if (cmd === 'on') autoReplyEnabled = true;
+            else if (cmd === 'off') autoReplyEnabled = false;
+            else if (cmd === 'toggle') autoReplyEnabled = !autoReplyEnabled;
+
+            await react(autoReplyEnabled ? '🤖' : '💤');
+            return sock.sendMessage(from, {
+                text: `╭─⬡ 🤖 *GLOBAL AUTOCHAT* ╡\n` +
+                      `│\n` +
+                      `│  📊 ${autoReplyEnabled ? '✅ ON' : '❌ OFF'}\n` +
+                      `│  💡 Sab users ke liye\n` +
+                      `│\n` +
+                      `╰─────────────────────────╯`
+            }, { quoted: msg });
+        }
+
+        // Regular user: per-chat toggle
+        const current = userEnabled[from] !== false;
+        const newState = cmd === 'on' ? true : cmd === 'off' ? false : !current;
+        userEnabled[from] = newState;
+
+        await react(newState ? '🤖' : '💤');
+        await sock.sendMessage(from, {
+            text: `╭─⬡ 🤖 *YOUR AUTOCHAT* ╡\n` +
+                  `│\n` +
+                  `│  📊 ${newState ? '✅ ON' : '❌ OFF'}\n` +
+                  `│  💡 Tumhare liye\n` +
+                  `│\n` +
+                  `╰─────────────────────────╯`
+        }, { quoted: msg });
+    },
+
+    // ─── .clearchat ──────────────────────────────
+    clearchat: async (ctx) => {
+        const { sock, msg, from, react } = ctx;
+        if (aiChats[from]) {
+            const total = aiChats[from].totalMsgs || 0;
+            delete aiChats[from];
+            saveChats();
+            await react('🗑️');
+            await sock.sendMessage(from, {
+                text: `🗑️ ${total} messages clear ho gaye.`
+            }, { quoted: msg });
+        } else {
+            await react('❓');
+            await sock.sendMessage(from, {
+                text: '📭 Koi chat history nahi.'
+            }, { quoted: msg });
+        }
+    },
+
+    // ─── .aistats ────────────────────────────────
+    aistats: async (ctx) => {
+        const { sock, msg, from, react } = ctx;
+        await react('📊');
+        const userChat = aiChats[from];
+        if (!userChat) {
+            return sock.sendMessage(from, {
+                text: '📭 Abhi tak chat nahi ki.\n💡 .ai se shuru karo'
+            }, { quoted: msg });
+        }
+        await sock.sendMessage(from, {
+            text: `╭─⬡ 📊 *YOUR AI STATS* ╡\n` +
+                  `│\n` +
+                  `│  💬 Messages: ${userChat.totalMsgs || 0}\n` +
+                  `│  📚 Memory: ${userChat.messages.length}\n` +
+                  `│  🤖 Auto: ${userEnabled[from] !== false ? 'ON' : 'OFF'}\n` +
+                  `│\n` +
+                  `╰─────────────────────────╯`
+        }, { quoted: msg });
+    },
+
+    // ─── .aimenu ─────────────────────────────────
+    aimenu: async (ctx) => {
+        const { sock, msg, react } = ctx;
+        await react('🤖');
+        await sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🤖 *AI MENU* ╡\n` +
+                  `│\n` +
+                  `│  🧠 *.ai <sawal>*\n` +
+                  `│     AI se poocho\n` +
+                  `│\n` +
+                  `│  💬 *.autochat on/off*\n` +
+                  `│     Apna auto-reply control\n` +
+                  `│\n` +
+                  `│  🗑️ *.clearchat*\n` +
+                  `│     Chat memory clear\n` +
+                  `│\n` +
+                  `│  📊 *.aistats*\n` +
+                  `│     Apni stats\n` +
+                  `│\n` +
+                  `│  💡 *Auto:* Koi bhi message bhejo\n` +
+                  `│     (bina command), AI khud reply karega!\n` +
+                  `│\n` +
+                  `│  💚 ARSLAN TECH'S\n` +
+                  `│\n` +
+                  `╰─────────────────────────╯`
+        }, { quoted: msg });
+    }
+};
