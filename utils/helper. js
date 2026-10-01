@@ -1,0 +1,144 @@
+// utils/helpers.js
+// General Helper Functions — Used Across the Bot
+// Roman Urdu
+// Powered by ARSLAN TECH'S
+
+// ─── Random Item from Array ──────────────────────
+function random(arr) {
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// ─── Random Number between min and max ──────────
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// ─── Sleep (Pause execution) ─────────────────────
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ─── Format Bytes to KB/MB/GB ────────────────────
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+}
+
+// ─── Progress Bar ────────────────────────────────
+function progressBar(percent, length = 15) {
+    if (percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
+    const filled = Math.round((percent / 100) * length);
+    const empty = length - filled;
+    return '▓'.repeat(filled) + '░'.repeat(empty);
+}
+
+// ─── Format Uptime ───────────────────────────────
+function formatUptime(seconds) {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    
+    if (days > 0) return `${days}d ${hours}h ${mins}m`;
+    if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
+    if (mins > 0) return `${mins}m ${secs}s`;
+    return `${secs}s`;
+}
+
+// ─── Clean Phone Number (only digits) ────────────
+function cleanPhone(phone) {
+    if (!phone) return '';
+    return phone.replace(/[^0-9]/g, '');
+}
+
+// ─── Shuffle Array ───────────────────────────────
+function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+// ─── Capitalize First Letter ─────────────────────
+function capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+// ─── Truncate Long Text ──────────────────────────
+function truncate(text, maxLength = 50) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
+}
+
+// ─── Get Pakistan Time ───────────────────────────
+function getPKTime() {
+    const now = new Date();
+    return now.toLocaleString('en-PK', { timeZone: 'Asia/Karachi' });
+}
+
+// ─── Get Pakistan Date ───────────────────────────
+function getPKDate() {
+    const now = new Date();
+    return now.toLocaleDateString('en-PK', { timeZone: 'Asia/Karachi' });
+}
+
+// ─── Percentage Calculator ───────────────────────
+function percentage(used, total) {
+    if (total === 0) return '0.0';
+    return ((used / total) * 100).toFixed(1);
+}
+
+// ─── Is Value Empty? ─────────────────────────────
+function isEmpty(value) {
+    if (value === null || value === undefined) return true;
+    if (typeof value === 'string' && value.trim() === '') return true;
+    if (Array.isArray(value) && value.length === 0) return true;
+    if (typeof value === 'object' && Object.keys(value).length === 0) return true;
+    return false;
+}
+
+// ─── Remove Duplicates ───────────────────────────
+function unique(arr) {
+    return [...new Set(arr)];
+}
+
+// ─── Get Random Emoji ────────────────────────────
+function randomEmoji() {
+    const emojis = ['🔥', '💚', '⭐', '✨', '💫', '🌟', '🎯', '🚀', '💥', '🎉', '💎', '👑'];
+    return emojis[Math.floor(Math.random() * emojis.length)];
+}
+
+// ─── Get Random Color (Hex) ─────────────────────
+function randomColor() {
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33F5', '#F5FF33', '#33FFF5', '#FF8C33', '#8C33FF'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// ─── Export All ──────────────────────────────────
+module.exports = {
+    random,
+    randomNumber,
+    sleep,
+    formatBytes,
+    progressBar,
+    formatUptime,
+    cleanPhone,
+    shuffle,
+    capitalize,
+    truncate,
+    getPKTime,
+    getPKDate,
+    percentage,
+    isEmpty,
+    unique,
+    randomEmoji,
+    randomColor
+};
