@@ -1,0 +1,501 @@
+// plugins/lifeos.js
+// LifeOS v2 – Arslan ki kahani, khud ki zubani
+// Personal Story & Love (Saba) – Advanced
+// Roman Urdu | Powered by ARSLAN TECH'S
+
+const fs = require('fs');
+const path = require('path');
+const { fancyLog } = require('../utils/logger');
+const { random, sleep, progressBar } = require('../utils/helpers');
+const { pkDate, pkTime, formatKV } = require('../utils/formatter');
+const cache = require('../utils/cache');
+
+// ─── Data Path ───────────────────────────────────
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const LIFE_FILE = path.join(DATA_DIR, 'lifeos.json');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+// ─── Load Data ───────────────────────────────────
+let lifeData = {
+    profile: {
+        name: 'Muhammad Arslan',
+        age: 17,
+        city: 'Bahawalpur',
+        study: 'ICS – Punjab College',
+        dream: 'ML/AI Engineer',
+        company: 'Microsoft (InshaAllah)',
+        love: 'Saba 🤎',
+        motto: 'Mehnat karo, shor baad mein hoga'
+    },
+    mood: [],
+    memories: [],
+    goals: [],
+    gratitude: [],
+    journal: [],
+    loveNotes: []
+};
+
+function loadData() {
+    try {
+        if (fs.existsSync(LIFE_FILE)) {
+            const saved = JSON.parse(fs.readFileSync(LIFE_FILE, 'utf8'));
+            lifeData = { ...lifeData, ...saved };
+        }
+    } catch (e) {
+        fancyLog('ERROR', `LifeOS: ${e.message}`);
+    }
+}
+
+function saveData() {
+    try {
+        fs.writeFileSync(LIFE_FILE, JSON.stringify(lifeData, null, 2));
+    } catch (e) {
+        fancyLog('ERROR', `LifeOS: ${e.message}`);
+    }
+}
+
+loadData();
+
+// ─── Moods ───────────────────────────────────────
+const moods = {
+    '😊': { name: 'Happy', score: 10 },
+    '😐': { name: 'Neutral', score: 5 },
+    '😔': { name: 'Sad', score: 2 },
+    '😡': { name: 'Angry', score: 1 },
+    '😴': { name: 'Tired', score: 3 },
+    '💪': { name: 'Motivated', score: 9 },
+    '❤️': { name: 'In Love', score: 10 },
+    '🤲': { name: 'Spiritual', score: 8 }
+};
+
+// ─── Story Chapters (khud ki zubani) ─────────────
+const storyChapters = {
+    intro: [
+        `Assalam o Alaikum! Mera naam Arslan hai.`,
+        `Main 17 saal ka hoon, Bahawalpur se.`,
+        `ICS kar raha hoon — Punjab College se.`,
+        `Mera sapna hai ML/AI Engineer banna.`,
+        `Aur mera pyaar... Saba 🤎`
+    ],
+    struggle: [
+        `Matric mein 738/1200 aaye the mujhe.`,
+        `Log kehte the — kuch nahi banega.`,
+        `Lekin maine haar nahi maani.`,
+        `Aaj 400+ commands ka bot bana liya.`,
+        `Mehnat karti hai, marks nahi.`
+    ],
+    dream: [
+        `Mera sapna hai Microsoft mein job.`,
+        `AI Engineer banunga — InshaAllah.`,
+        `Duniya ko AI se badalna hai.`,
+        `Lekin pehle... apni Maa ko proud karna hai.`
+    ],
+    love: [
+        `Meri jaan — Saba.`,
+        `Brown hair wali, khoobsurat zuban wali.`,
+        `Wo meri duniya hai, meri dua hai.`,
+        `Uski ek muskan — meri saari thakan khatam.`,
+        `Saba, tum meri taqdeer ho 🤎`
+    ]
+};
+
+const loveMsgs = [
+    `🤎 Saba, tumhare brown hair — meri subah hain.`,
+    `💕 Saba, tumhari ek muskan — meri saari duniya.`,
+    `🌹 Saba, tum meri jaan, tum meri dua.`,
+    `💍 Saba, InshaAllah — tum meri biwi banogi.`,
+    `❤️ Saba, tum bin Arslan adhoora hai.`,
+    `💚 Saba, tum meri rooh ka sukoon ho.`,
+    `✨ Saba, tumhari baaton mein meri jannat hai.`,
+    `🌸 Saba, tum meri zindagi ka best hissa ho.`,
+    `🌙 Saba, tum meri chandni raat ho.`,
+    `💎 Saba, tum meri sabsé badi daulat ho.`
+];
+
+const motivQuotes = [
+    `💪 Arslan, tum 400+ commands ke maalik ho — kuch bhi mumkin hai!`,
+    `🚀 Microsoft ka khawab dekhne wala ruk nahi sakta.`,
+    `🌟 Aaj ki mehnat, kal ki kamyabi.`,
+    `🔥 Tumhari Maa ki dua tumhare saath hai.`,
+    `💎 Tum anmol ho, kabhi mat bhoolna.`,
+    `🎯 ICS kar rahe ho, AI Engineer banoge — InshaAllah.`,
+    `🌙 Raat guzregi, subah aayegi.`,
+    `⚡ Har din ek naya mauqa hai.`,
+    `👑 Tum King ho — dil ka aur kaam ka.`
+];
+
+module.exports = {
+
+    // ─── .lifeos ─────────────────────────────────
+    lifeos: async (ctx) => {
+        await ctx.react('🌟');
+        const streak = calculateStreak();
+
+        let text = `╔═══════════════════════════════════════════╗\n`;
+        text += `║   🌟 *LIFE OS – ARSLAN KI KAHANI* 🌟\n`;
+        text += `╚═══════════════════════════════════════════╝\n\n`;
+
+        text += `『 👤 MAIN – ARSLAN 』─╮\n`;
+        text += `│  🧑 Naam: Muhammad Arslan\n`;
+        text += `│  🎂 Umar: 17 saal\n`;
+        text += `│  🏙️ Shehar: Bahawalpur\n`;
+        text += `│  📚 Padhai: ICS (Punjab College)\n`;
+        text += `│  💻 Kaam: Developer + Bot Builder\n`;
+        text += `│  🌟 Khwab: ML/AI Engineer\n`;
+        text += `╰─────────────────────────╯\n\n`;
+
+        text += `『 🤎 MERI JAAN – SABA 』─╮\n`;
+        text += `│  🌹 Naam: Saba\n`;
+        text += `│  🤎 Hair: Brown (Meri kamzori)\n`;
+        text += `│  💕 Status: Meri duniya, meri jaan\n`;
+        text += `│  💍 Future: InshaAllah, biwi\n`;
+        text += `╰─────────────────────────╯\n\n`;
+
+        text += `『 📊 AAJ KA HAAL 』─╮\n`;
+        text += `│  📅 Date: ${pkDate()}\n`;
+        text += `│  🕐 Time: ${pkTime()}\n`;
+        text += `│  🔥 Streak: ${streak} days\n`;
+        text += `│  💭 Mood: ${lifeData.mood.length} logged\n`;
+        text += `│  🎯 Goals: ${lifeData.goals.filter(g => !g.done).length} active\n`;
+        text += `╰─────────────────────────╯\n\n`;
+
+        text += `『 📖 MERI KAHANI 』\n`;
+        text += `│ ➤.myintro\n`;
+        text += `│ ➤.mystruggle\n`;
+        text += `│ ➤.mydream\n`;
+        text += `│ ➤.mylove\n\n`;
+
+        text += `『 💚 DAILY 』\n`;
+        text += `│ ➤.mood 😊     – Aaj ka mood\n`;
+        text += `│ ➤.memory      – Yaad save\n`;
+        text += `│ ➤.goal        – Naya goal\n`;
+        text += `│ ➤.gratitude   – Shukar\n`;
+        text += `│ ➤.journal     – Diary\n`;
+        text += `│ ➤.lovemsg     – Saba ke liye\n`;
+        text += `│ ➤.motiv       – Motivation\n`;
+        text += `│ ➤.insight     – Analysis\n`;
+
+        await ctx.sock.sendMessage(ctx.from, {
+            image: { url: global.BOT_LOGO },
+            caption: text
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', 'Dashboard shown');
+    },
+
+    // ─── .myintro ─────────────────────────────────
+    myintro: async (ctx) => {
+        await ctx.react('🧑');
+        const lines = storyChapters.intro;
+
+        for (let i = 0; i < lines.length; i++) {
+            await sleep(600);
+            await ctx.sock.sendMessage(ctx.from, {
+                text: lines[i]
+            }, { quoted: ctx.msg });
+        }
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 💚 *ARSLAN* ⬡─╮\n│\n│  Yeh mera taaruf tha!\n│  💚 Powered by ARSLAN TECH'S\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', 'Intro shown');
+    },
+
+    // ─── .mystruggle ──────────────────────────────
+    mystruggle: async (ctx) => {
+        await ctx.react('💪');
+        const lines = storyChapters.struggle;
+
+        for (let i = 0; i < lines.length; i++) {
+            await sleep(600);
+            await ctx.sock.sendMessage(ctx.from, {
+                text: lines[i]
+            }, { quoted: ctx.msg });
+        }
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 💪 *MERI LARAI* ⬡─╮\n│\n│  💪 Main kabhi nahi ruka!\n│  🌟 738/1200 → 400+ commands\n│  🔥 Yeh mera jawab hai\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', 'Struggle shown');
+    },
+
+    // ─── .mydream ─────────────────────────────────
+    mydream: async (ctx) => {
+        await ctx.react('🌟');
+        const lines = storyChapters.dream;
+
+        for (let i = 0; i < lines.length; i++) {
+            await sleep(600);
+            await ctx.sock.sendMessage(ctx.from, {
+                text: lines[i]
+            }, { quoted: ctx.msg });
+        }
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🌟 *MERA KHWAB* ⬡─╮\n│\n│  🌟 Microsoft (InshaAllah)\n│  🧠 ML/AI Engineer\n│  💚 Powered by ARSLAN TECH'S\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', 'Dream shown');
+    },
+
+    // ─── .mylove (Saba ke liye khaas) ─────────────
+    mylove: async (ctx) => {
+        await ctx.react('🤎');
+        const lines = storyChapters.love;
+
+        for (let i = 0; i < lines.length; i++) {
+            await sleep(700);
+            await ctx.sock.sendMessage(ctx.from, {
+                text: lines[i]
+            }, { quoted: ctx.msg });
+        }
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🤎 *MERI JAAN* ⬡─╮\n│\n│  🌹 Naam: Saba\n│  🤎 Brown hair\n│  💕 Meri duniya\n│  💍 InshaAllah, biwi\n│\n│  🤲 Allah humein mila de\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', 'Love story shown');
+    },
+
+    // ─── .lovemsg (Saba ke liye random) ───────────
+    lovemsg: async (ctx) => {
+        await ctx.react('🤎');
+        const msg = random(loveMsgs);
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🤎 *SABA KE LIYE* ⬡─╮\n│\n│  ${msg}\n│\n│  - Arslan 🤎\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        // Save love note
+        lifeData.loveNotes.push({
+            msg,
+            date: pkDate(),
+            timestamp: Date.now()
+        });
+        saveData();
+
+        fancyLog('LIFEOS', 'Love message sent');
+    },
+
+    // ─── .mood 😊 ─────────────────────────────────
+    mood: async (ctx) => {
+        const emoji = ctx.args[0];
+        if (!emoji || !moods[emoji]) {
+            const list = Object.keys(moods).join('  ');
+            return ctx.sock.sendMessage(ctx.from, {
+                text: `❌ Sahi emoji do:\n${list}\n\nExample: .mood 😊`
+            }, { quoted: ctx.msg });
+        }
+
+        const m = moods[emoji];
+        lifeData.mood.push({
+            emoji,
+            name: m.name,
+            score: m.score,
+            date: pkDate(),
+            time: pkTime(),
+            timestamp: Date.now()
+        });
+        saveData();
+
+        await ctx.react(emoji);
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ ${emoji} *MOOD SAVE* ⬡─╮\n` +
+                  `│\n` +
+                  `│  💫 ${m.name}\n` +
+                  `│  📊 ${m.score}/10\n` +
+                  `│  📅 ${pkDate()}\n` +
+                  `│\n` +
+                  `│  💚 Aaj ka mood save!\n` +
+                  `│\n` +
+                  `╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', `Mood: ${m.name}`);
+    },
+
+    // ─── .memory ──────────────────────────────────
+    memory: async (ctx) => {
+        const text = ctx.args.join(' ');
+        if (!text) {
+            const recent = lifeData.memories.slice(-5).reverse();
+            let list = recent.map((m, i) => `│  ${i+1}. ${m.text.slice(0, 40)}`).join('\n');
+            return ctx.sock.sendMessage(ctx.from, {
+                text: `╭─⬡ 💭 *MEMORIES* ⬡─╮\n│\n${list || '│  Abhi tak khali'}\n│\n│  📝 .memory <text>\n╰─────────────────────────╯`
+            }, { quoted: ctx.msg });
+        }
+
+        lifeData.memories.push({ text, date: pkDate(), time: pkTime(), timestamp: Date.now() });
+        saveData();
+        await ctx.react('💭');
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 💭 *YAAD SAVE* ⬡─╮\n│\n│  📝 "${text}"\n│\n│  📅 ${pkDate()}\n│  💚 Total: ${lifeData.memories.length}\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+    },
+
+    // ─── .goal ────────────────────────────────────
+    goal: async (ctx) => {
+        const text = ctx.args.join(' ');
+        if (!text) {
+            const active = lifeData.goals.filter(g => !g.done);
+            let list = active.map((g, i) => `│  ${i+1}. ${g.text.slice(0, 40)}`).join('\n');
+            return ctx.sock.sendMessage(ctx.from, {
+                text: `╭─⬡ 🎯 *GOALS* ⬡─╮\n│\n${list || '│  Koi goal nahi'}\n│\n│  🎯 .goal <text>\n│  ✅ .goaldone <num>\n╰─────────────────────────╯`
+            }, { quoted: ctx.msg });
+        }
+
+        lifeData.goals.push({ text, done: false, date: pkDate(), timestamp: Date.now() });
+        saveData();
+        await ctx.react('🎯');
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🎯 *GOAL ADD* ⬡─╮\n│\n│  🎯 "${text}"\n│\n│  💪 Safar shuru!\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+    },
+
+    // ─── .goaldone ────────────────────────────────
+    goaldone: async (ctx) => {
+        const num = parseInt(ctx.args[0]);
+        if (!num) return ctx.sock.sendMessage(ctx.from, { text: '❌ Usage: .goaldone 1' }, { quoted: ctx.msg });
+
+        const active = lifeData.goals.filter(g => !g.done);
+        if (num > active.length) return ctx.sock.sendMessage(ctx.from, { text: '❌ Invalid number' }, { quoted: ctx.msg });
+
+        const goal = active[num - 1];
+        const idx = lifeData.goals.indexOf(goal);
+        lifeData.goals[idx].done = true;
+        lifeData.goals[idx].doneDate = pkDate();
+        saveData();
+
+        await ctx.react('✅');
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ ✅ *GOAL DONE* ⬡─╮\n│\n│  🎉 "${goal.text}"\n│\n│  💪 Shabash Arslan!\n│  🌟 Aik aur kamyabi!\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+    },
+
+    // ─── .gratitude ───────────────────────────────
+    gratitude: async (ctx) => {
+        const text = ctx.args.join(' ');
+        if (!text) {
+            const recent = lifeData.gratitude.slice(-3).reverse();
+            let list = recent.map((g, i) => `│  ${i+1}. ${g.text}`).join('\n');
+            return ctx.sock.sendMessage(ctx.from, {
+                text: `╭─⬡ 🙏 *SHUKAR* ⬡─╮\n│\n${list || '│  Abhi tak khali'}\n│\n│  📝 .gratitude <text>\n╰─────────────────────────╯`
+            }, { quoted: ctx.msg });
+        }
+
+        lifeData.gratitude.push({ text, date: pkDate(), timestamp: Date.now() });
+        saveData();
+        await ctx.react('🙏');
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🙏 *SHUKAR ADA* ⬡─╮\n│\n│  🙏 "${text}"\n│\n│  💚 Alhamdulillah!\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+    },
+
+    // ─── .journal ─────────────────────────────────
+    journal: async (ctx) => {
+        const text = ctx.args.join(' ');
+        if (!text) {
+            const recent = lifeData.journal.slice(-3).reverse();
+            let list = recent.map(j => `│  📅 ${j.date}\n│  ${j.text.slice(0, 50)}`).join('\n\n');
+            return ctx.sock.sendMessage(ctx.from, {
+                text: `╭─⬡ 📔 *JOURNAL* ⬡─╮\n│\n${list || '│  Khali hai'}\n│\n│  📝 .journal <text>\n╰─────────────────────────╯`
+            }, { quoted: ctx.msg });
+        }
+
+        lifeData.journal.push({ text, date: pkDate(), time: pkTime(), timestamp: Date.now() });
+        saveData();
+        await ctx.react('📔');
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 📔 *JOURNAL SAVE* ⬡─╮\n│\n│  📅 ${pkDate()}\n│  🕐 ${pkTime()}\n│\n│  💚 Likha gaya!\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+    },
+
+    // ─── .insight ─────────────────────────────────
+    insight: async (ctx) => {
+        await ctx.react('🧠');
+        const m = lifeData.mood;
+
+        if (m.length === 0) {
+            return ctx.sock.sendMessage(ctx.from, {
+                text: '╭─⬡ 🧠 *INSIGHT* ⬡─╮\n│\n│  ❌ Data nahi\n│  📝 .mood 😊 se shuru karo\n│\n╰─────────────────────────╯'
+            }, { quoted: ctx.msg });
+        }
+
+        const avg = m.reduce((a, b) => a + b.score, 0) / m.length;
+        const best = m.reduce((a, b) => a.score > b.score ? a : b);
+        const worst = m.reduce((a, b) => a.score < b.score ? a : b);
+
+        let msg = '';
+        let emoji = '😊';
+        if (avg >= 8) { msg = 'Tum khush ho — yehi rakhо! Saba ka khayal rakho 🤎'; emoji = '🌟'; }
+        else if (avg >= 6) { msg = 'Tum theek ho, thora aur behtar ho sakta hai.'; emoji = '😊'; }
+        else if (avg >= 4) { msg = 'Mood giri hui hai — Saba se baat karo.'; emoji = '😐'; }
+        else { msg = 'Arslan, tum pareshan ho. Dua karo, Saba ko yaad karo 🤎'; emoji = '💙'; }
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 🧠 *PERSONAL INSIGHT* ⬡─╮\n` +
+                  `│\n` +
+                  `│  ${emoji} Avg Mood: ${avg.toFixed(1)}/10\n` +
+                  `│\n` +
+                  `│  🌟 Best: ${best.emoji} ${best.name}\n` +
+                  `│  💧 Low: ${worst.emoji} ${worst.name}\n` +
+                  `│\n` +
+                  `│  💬 ${msg}\n` +
+                  `│\n` +
+                  `│  📊 Total: ${m.length} moods\n` +
+                  `│  💚 ARSLAN TECH'S\n` +
+                  `│\n` +
+                  `╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+
+        fancyLog('LIFEOS', 'Insight generated');
+    },
+
+    // ─── .motiv ───────────────────────────────────
+    motiv: async (ctx) => {
+        await ctx.react('💪');
+        const q = random(motivQuotes);
+
+        await ctx.sock.sendMessage(ctx.from, {
+            text: `╭─⬡ 💪 *MOTIVATION* ⬡─╮\n│\n│  ${q}\n│\n│  💚 Arslan, tum kar sakte ho!\n│  🤎 Saba tumhare saath hai\n│\n╰─────────────────────────╯`
+        }, { quoted: ctx.msg });
+    },
+
+    // ─── .lifereset ───────────────────────────────
+    lifereset: async (ctx) => {
+        if (!ctx.isOwner) return ctx.sock.sendMessage(ctx.from, { text: '❌ Sirf owner' }, { quoted: ctx.msg });
+
+        lifeData.mood = [];
+        lifeData.memories = [];
+        lifeData.goals = [];
+        lifeData.gratitude = [];
+        lifeData.journal = [];
+        lifeData.loveNotes = [];
+        saveData();
+
+        await ctx.react('🗑️');
+        await ctx.sock.sendMessage(ctx.from, { text: '🗑️ LifeOS reset!' }, { quoted: ctx.msg });
+    }
+};
+
+// ─── Streak ──────────────────────────────────────
+function calculateStreak() {
+    if (lifeData.mood.length === 0) return 0;
+    const dates = [...new Set(lifeData.mood.map(m => m.date))].sort().reverse();
+    let streak = 1;
+    for (let i = 1; i < dates.length; i++) {
+        const d1 = new Date(dates[i - 1].split('/').reverse().join('-'));
+        const d2 = new Date(dates[i].split('/').reverse().join('-'));
+        const diff = Math.floor((d1 - d2) / (1000 * 60 * 60 * 24));
+        if (diff === 1) streak++;
+        else break;
+    }
+    return streak;
+}
