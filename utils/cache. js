@@ -1,0 +1,225 @@
+// utils/cache.js
+// In-Memory Cache System — Temporary Data Storage
+// Roman Urdu
+// Powered by ARSLAN TECH'S
+
+// ─── Cache Storage ───────────────────────────────
+const cache = new Map();
+
+// ─── Statistics ──────────────────────────────────
+let stats = {
+    hits: 0,
+    misses: 0,
+    sets: 0,
+    deletes: 0,
+    evictions: 0
+};
+
+// ─── Set (Save to Cache) ─────────────────────────
+function set(key, value, ttlSeconds = 3600) {
+    if (!key) return false;
+    
+    cache.set(key, {
+        value,
+        expiresAt: ttlSeconds > 0 ? Date.now() + (ttlSeconds * 1000) : null,
+        createdAt: Date.now()
+    });
+    
+    stats.sets++;
+    return true;
+}
+
+// ─── Get (Read from Cache) ───────────────────────
+function get(key) {
+    if (!key) return null;
+    
+    const item = cache.get(key);
+    
+    if (!item) {
+        stats.misses++;
+        return null;
+    }
+    
+    // Check expiration
+    if (item.expiresAt && Date.now() > item.expiresAt) {
+        cache.delete(key);
+        stats.evictions++;
+        stats.misses++;
+        return null;
+    }
+    
+    stats.hits++;
+    return item.value;
+}
+
+// ─── Has (Check Exists) ──────────────────────────
+function has(key) {
+    if (!key) return false;
+    const item = cache.get(key);
+    if (!item) return false;
+    if (item.expiresAt && Date.now() > item.expiresAt) {
+        cache.delete(key);
+        stats.evictions++;
+        return false;
+    }
+    return true;
+}
+
+// ─── Delete ──────────────────────────────────────
+function del(key) {
+    if (!key) return false;
+    const existed = cache.has(key);
+    cache.delete(key);
+    if (existed) stats.deletes++;
+    return existed;
+}
+
+// ─── Clear All ───────────────────────────────────
+function clear() {
+    cache.clear();
+    return true;
+}
+
+// ─── Size (How many items) ──────────────────────
+function size() {
+    return cache.size;
+}
+
+// ─── Keys (All keys) ─────────────────────────────
+function keys() {
+    return Array.from(cache.keys());
+}
+
+// ─── Values (All values) ─────────────────────────
+function values() {
+    return Array.from(cache.values()).map(item => item.value);
+}
+
+// ─── TTL Remaining ───────────────────────────────
+function ttl(key) {
+    const item = cache.get(key);
+    if (!item) return -1;
+    if (!item.expiresAt) return -2; // No expiry
+    const remaining = item.expiresAt - Date.now();
+    return remaining > 0 ? Math.floor(remaining / 1000) : -1;
+}
+
+// ─── Get or Set (Convenience) ────────────────────
+async function getOrSet(key, fetchFn, ttlSeconds = 3600) {
+    const cached = get(key);
+    if (cached !== null) return cached;
+    
+    const value = await fetchFn();
+    set(key, value, ttlSeconds);
+    return value;
+}
+
+// ─── Increment ───────────────────────────────────
+function increment(key, amount = 1, ttlSeconds = 3600) {
+    const current = get(key) || 0;
+    const newValue = Number(current) + Number(amount);
+    set(key, newValue, ttlSeconds);
+    return newValue;
+}
+
+// ─── Decrement ───────────────────────────────────
+function decrement(key, amount = 1, ttlSeconds = 3600) {
+    return increment(key, -amount, ttlSeconds);
+}
+
+// ─── Push to Array ───────────────────────────────
+function push(key, value, ttlSeconds = 3600) {
+    let arr = get(key) || [];
+    if (!Array.isArray(arr)) arr = [];
+    arr.push(value);
+    set(key, arr, ttlSeconds);
+    return arr;
+}
+
+// ─── Get Statistics ──────────────────────────────
+function getStats() {
+    const total = stats.hits + stats.misses;
+    return {
+        ...stats,
+        size: cache.size,
+        hitRate: total > 0 ? ((stats.hits / total) * 100).toFixed(1) + '%' : '0%'
+    };
+}
+
+// ─── Reset Statistics ────────────────────────────
+function resetStats() {
+    stats = { hits: 0, misses: 0, sets: 0, deletes: 0, evictions: 0 };
+}
+
+// ─── Cleanup (Remove Expired) ────────────────────
+function cleanup() {
+    const now = Date.now();
+    let removed = 0;
+    for (const [key, item] of cache.entries()) {
+        if (item.expiresAt && now > item.expiresAt) {
+            cache.delete(key);
+            removed++;
+            stats.evictions++;
+        }
+    }
+    return removed;
+}
+
+// ─── Auto Cleanup (every 5 minutes) ──────────────
+setInterval(() => {
+    const removed = cleanup();
+    if (removed > 0) {
+        // Silent cleanup
+    }
+}, 5 * 60 * 1000);
+
+// ─── Common Use Cases (Helper Functions) ────────
+
+// Anti-spam cache (user, 10 seconds)
+function checkSpam(userId, limit = 3, windowSeconds = 10) {
+    const key = `spam:${userId}`;
+    const count = increment(key, 1, windowSeconds);
+    return count > limit;
+}
+
+// Cooldown check
+function checkCooldown(userId, command, seconds = 30) {
+    const key = `cooldown:${userId}:${command}`;
+    if (has(key)) return ttl(key);
+    set(key, true, seconds);
+    return 0;
+}
+
+// Save last command
+function saveLastCommand(userId, command) {
+    set(`lastcmd:${userId}`, command, 3600);
+}
+
+// Get last command
+function getLastCommand(userId) {
+    return get(`lastcmd:${userId}`);
+}
+
+// ─── Export All ──────────────────────────────────
+module.exports = {
+    set,
+    get,
+    has,
+    del,
+    clear,
+    size,
+    keys,
+    values,
+    ttl,
+    getOrSet,
+    increment,
+    decrement,
+    push,
+    getStats,
+    resetStats,
+    cleanup,
+    checkSpam,
+    checkCooldown,
+    saveLastCommand,
+    getLastCommand
+};
