@@ -1,0 +1,193 @@
+// utils/valida#80FF00tor.js
+// Data Validation Functions — Phone, URL, Email, JID
+// Roman Urdu
+// Powered by ARSLAN TECH'S
+
+// ─── Phone Number Validation ─────────────────────
+function isValidPhone(phone) {
+    if (!phone) return false;
+    const clean = String(phone).replace(/[^0-9]/g, '');
+    return clean.length >= 10 && clean.length <= 15;
+}
+
+// ─── URL Validation ──────────────────────────────
+function isValidUrl(url) {
+    if (!url) return false;
+    try {
+        const parsed = new URL(url);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
+// ─── Email Validation ────────────────────────────
+function isValidEmail(email) {
+    if (!email) return false;
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+// ─── WhatsApp JID Validation ─────────────────────
+function isValidJid(jid) {
+    if (!jid) return false;
+    return String(jid).endsWith('@s.whatsapp.net');
+}
+
+// ─── Group JID Validation ────────────────────────
+function isValidGroupJid(jid) {
+    if (!jid) return false;
+    return String(jid).endsWith('@g.us');
+}
+
+// ─── Instagram URL ───────────────────────────────
+function isInstagramUrl(url) {
+    if (!url) return false;
+    return /instagram\.com\/(p|reel|tv)\//i.test(url);
+}
+
+// ─── TikTok URL ──────────────────────────────────
+function isTikTokUrl(url) {
+    if (!url) return false;
+    return /tiktok\.com\/@?[\w.-]+\/video\//i.test(url) || 
+           /vm\.tiktok\.com\//i.test(url) ||
+           /vt\.tiktok\.com\//i.test(url);
+}
+
+// ─── YouTube URL ─────────────────────────────────
+function isYouTubeUrl(url) {
+    if (!url) return false;
+    return /(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)/i.test(url);
+}
+
+// ─── Facebook URL ────────────────────────────────
+function isFacebookUrl(url) {
+    if (!url) return false;
+    return /facebook\.com\//i.test(url) || /fb\.watch\//i.test(url);
+}
+
+// ─── Twitter/X URL ───────────────────────────────
+function isTwitterUrl(url) {
+    if (!url) return false;
+    return /(twitter\.com|x\.com)\//i.test(url);
+}
+
+// ─── Pinterest URL ───────────────────────────────
+function isPinterestUrl(url) {
+    if (!url) return false;
+    return /pinterest\.com\//i.test(url) || /pin\.it\//i.test(url);
+}
+
+// ─── Spotify URL ─────────────────────────────────
+function isSpotifyUrl(url) {
+    if (!url) return false;
+    return /spotify\.com\/(track|album|playlist)\//i.test(url);
+}
+
+// ─── Detect URL Type ─────────────────────────────
+function detectUrlType(url) {
+    if (isInstagramUrl(url)) return 'instagram';
+    if (isTikTokUrl(url)) return 'tiktok';
+    if (isYouTubeUrl(url)) return 'youtube';
+    if (isFacebookUrl(url)) return 'facebook';
+    if (isTwitterUrl(url)) return 'twitter';
+    if (isPinterestUrl(url)) return 'pinterest';
+    if (isSpotifyUrl(url)) return 'spotify';
+    if (isValidUrl(url)) return 'other';
+    return 'unknown';
+}
+
+// ─── Time Format Validation (HH:MM) ─────────────
+function isValidTime(time) {
+    if (!time) return false;
+    return /^([01]?\d|2[0-3]):[0-5]\d$/.test(time);
+}
+
+// ─── Date Format Validation (YYYY-MM-DD) ────────
+function isValidDate(date) {
+    if (!date) return false;
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(date)) return false;
+    const d = new Date(date);
+    return d instanceof Date && !isNaN(d);
+}
+
+// ─── Number Validation ───────────────────────────
+function isValidNumber(value) {
+    if (value === null || value === undefined || value === '') return false;
+    return !isNaN(Number(value)) && isFinite(value);
+}
+
+// ─── Integer Validation ──────────────────────────
+function isValidInt(value) {
+    if (!isValidNumber(value)) return false;
+    return Number.isInteger(Number(value));
+}
+
+// ─── Range Validation ────────────────────────────
+function isInRange(value, min, max) {
+    if (!isValidNumber(value)) return false;
+    const num = Number(value);
+    return num >= min && num <= max;
+}
+
+// ─── Length Validation ───────────────────────────
+function hasValidLength(text, min = 1, max = 10000) {
+    if (typeof text !== 'string') return false;
+    return text.length >= min && text.length <= max;
+}
+
+// ─── No Bad Words ────────────────────────────────
+const BAD_WORDS = ['fuck', 'shit', 'bitch', 'ass', 'damn', 'bastard'];
+function hasNoBadWords(text) {
+    if (!text) return true;
+    const lower = text.toLowerCase();
+    return !BAD_WORDS.some(word => lower.includes(word));
+}
+
+// ─── Base64 Validation ───────────────────────────
+function isValidBase64(str) {
+    if (!str) return false;
+    try {
+        return Buffer.from(str, 'base64').toString('base64') === str;
+    } catch {
+        return false;
+    }
+}
+
+// ─── JSON Validation ─────────────────────────────
+function isValidJson(str) {
+    if (!str) return false;
+    try {
+        JSON.parse(str);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+// ─── Export All ──────────────────────────────────
+module.exports = {
+    isValidPhone,
+    isValidUrl,
+    isValidEmail,
+    isValidJid,
+    isValidGroupJid,
+    isInstagramUrl,
+    isTikTokUrl,
+    isYouTubeUrl,
+    isFacebookUrl,
+    isTwitterUrl,
+    isPinterestUrl,
+    isSpotifyUrl,
+    detectUrlType,
+    isValidTime,
+    isValidDate,
+    isValidNumber,
+    isValidInt,
+    isInRange,
+    hasValidLength,
+    hasNoBadWords,
+    isValidBase64,
+    isValidJson
+};
