@@ -1,8 +1,9 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const QRCode = require('qrcode');
 const config = require('./config');
-const { createPairingCode, getBotStatus, startBot } = require('./index');
+const { createPairingCode, getBotStatus, getPairingQr, startBot } = require('./index');
 const { fancyLog } = require('./utils/logger');
 
 const PORT = Number(process.env.PORT || 5000);
@@ -67,6 +68,24 @@ const server = http.createServer(async (req, res) => {
             return sendJson(res, 200, getBotStatus());
         }
 
+        if (req.method === 'GET' && req.url === '/qr') {
+            if (!config.PUBLIC_PAIRING) {
+                return sendJson(res, 403, { success: false, error: 'QR pairing is disabled in owner-only mode.' });
+            }
+            if (getBotStatus().connected) {
+                return sendJson(res, 409, { success: false, error: 'This bot is already connected to WhatsApp.' });
+            }
+            const qr = getPairingQr();
+            if (!qr) {
+                return sendJson(res, 503, {
+                    success: false,
+                    error: 'A fresh QR is not ready yet. Wait for pairing status, or let the active pairing code expire.',
+                });
+            }
+            const image = await QRCode.toDataURL(qr, { errorCorrectionLevel: 'M', margin: 2, width: 280 });
+            return sendJson(res, 200, { success: true, qr: image });
+        }
+
         if (req.method === 'GET' && req.url === '/health') {
             const status = getBotStatus();
             return sendJson(res, 200, {
@@ -121,12 +140,16 @@ const server = http.createServer(async (req, res) => {
         res.end('Not found');
     } catch (err) {
         fancyLog('ERROR', `Web request failed: ${err.message}`);
-        const status = err.code === 'PAIRING_BUSY' || /already connected/i.test(err.message)
+        const status = err.code === 'PAIRING_BUSY' || /already connected|active pairing code/i.test(err.message)
             ? 409
-            : 500;
+            : /valid WhatsApp number|country code/i.test(err.message)
+                ? 400
+                : /still starting|reconnecting|not ready|session is logged out/i.test(err.message)
+                    ? 503
+                    : 500;
         return sendJson(res, status, {
             success: false,
-            error: status === 409 ? err.message : 'The pairing service is temporarily unavailable.',
+            error: status === 500 ? 'Pairing failed: ' + err.message : err.message,
         });
     }
 });

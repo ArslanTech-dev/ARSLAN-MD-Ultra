@@ -390,6 +390,16 @@
         }
         .pair-button:hover { filter: brightness(1.08); transform: translateY(-2px); }
         .pair-button:disabled { cursor: not-allowed; opacity: .55; transform: none; }
+        .pair-button[hidden] { display: none; }
+        .qr-button {
+            margin-top: 9px;
+            color: var(--text);
+            border: 1px solid rgba(181, 211, 238, .2);
+            background: rgba(2, 15, 28, .4);
+            box-shadow: none;
+            font-size: .68rem;
+            letter-spacing: .04em;
+        }
         .button-icon { font-size: 1rem; }
 
         .result {
@@ -413,6 +423,15 @@
         }
         .result.error { border-style: solid; border-color: rgba(255,156,169,.36); color: var(--danger); }
         .result.loading { color: var(--warning); }
+        .qr-image {
+            width: min(100%, 230px);
+            aspect-ratio: 1;
+            padding: 10px;
+            border-radius: 13px;
+            background: #fff;
+            image-rendering: pixelated;
+        }
+        .qr-help { max-width: 260px; line-height: 1.5; }
         .result-kicker {
             color: var(--mint);
             font-family: "DM Mono", monospace;
@@ -604,7 +623,7 @@
                     open while your device links.
                 </p>
                 <div class="feature-row" aria-label="Platform features">
-                    <div class="feature"><span class="feature-number">01 / ACCESS</span><strong>Owner locked</strong></div>
+                    <div class="feature"><span class="feature-number">01 / ACCESS</span><strong>Public pairing</strong></div>
                     <div class="feature"><span class="feature-number">02 / CORE</span><strong>Multi-device ready</strong></div>
                     <div class="feature"><span class="feature-number">03 / UPTIME</span><strong>Self-healing bot</strong></div>
                 </div>
@@ -631,10 +650,14 @@
                             <input id="phone" name="phone" inputmode="numeric" autocomplete="tel"
                                 placeholder="923xxxxxxxxx" maxlength="15" required />
                         </div>
-                        <p class="input-hint">Digits only · include country code · owner access verified server-side</p>
+                        <p class="input-hint">Digits only · include country code · one active WhatsApp link at a time</p>
                         <button class="pair-button" id="pairBtn" type="submit">
                             <span class="button-icon">⌁</span>
                             <span id="buttonText">Generate pairing code</span>
+                        </button>
+                        <button class="pair-button qr-button" id="qrBtn" type="button" hidden>
+                            <span class="button-icon">▦</span>
+                            <span>Scan QR code instead</span>
                         </button>
                     </form>
 
@@ -649,9 +672,11 @@
                         </button>
                         <div class="guide-content" id="guideContent">
                             <ol>
-                                <li>Enter the owner WhatsApp number with its country code.</li>
+                                <li>Enter any WhatsApp number with its country code.</li>
                                 <li>Tap Generate pairing code and copy the fresh code.</li>
                                 <li>In WhatsApp, open Linked devices → Link with phone number instead.</li>
+                                <li>Only one WhatsApp account can be linked to this bot at a time.</li>
+                                <li>If the code is rejected, use the QR option and scan it from Linked devices.</li>
                             </ol>
                         </div>
                     </section>
@@ -673,7 +698,7 @@
                 <div class="activity-list">
                     <div class="activity-item">
                         <span class="activity-icon" aria-hidden="true">↯</span>
-                        <div><strong>Pairing service online</strong><small>Requests are rate-limited and owner-checked</small></div>
+                        <div><strong>Public pairing online</strong><small>Requests are checked; WhatsApp can still reject a device link</small></div>
                     </div>
                     <div class="activity-item">
                         <span class="activity-icon" aria-hidden="true">◌</span>
@@ -694,13 +719,13 @@
                     <div class="stat"><span class="stat-label">◉ state</span><strong class="stat-value" id="stateValue">STARTING</strong></div>
                     <div class="stat"><span class="stat-label">◷ uptime</span><strong class="stat-value" id="uptimeValue">—</strong></div>
                     <div class="stat"><span class="stat-label">⌘ runtime</span><strong class="stat-value" id="runtimeValue">Node 20</strong></div>
-                    <div class="stat"><span class="stat-label">◈ access</span><strong class="stat-value">OWNER ONLY</strong></div>
+                    <div class="stat"><span class="stat-label">◈ access</span><strong class="stat-value" id="accessValue">PUBLIC</strong></div>
                 </div>
             </div>
         </section>
 
         <footer>
-            <span>© 2026 ARSLAN TECH'S · private pairing console</span>
+            <span>© 2026 ARSLAN TECH'S · public pairing console</span>
             <nav class="footer-links" aria-label="Footer links">
                 <a href="/health">Health</a>
                 <a href="https://github.com/ArslanTech-dev/ARSLAN-MD-Ultra" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -720,6 +745,8 @@
         const stateValue = document.getElementById('stateValue');
         const uptimeValue = document.getElementById('uptimeValue');
         const runtimeValue = document.getElementById('runtimeValue');
+        const accessValue = document.getElementById('accessValue');
+        const qrBtn = document.getElementById('qrBtn');
         const telemetryState = document.getElementById('telemetryState');
         const version = document.getElementById('version');
         const themeButton = document.getElementById('themeButton');
@@ -729,6 +756,9 @@
         let busy = false;
         let codeExpiresAt = 0;
         let hasCode = false;
+        let hasQr = false;
+        let qrRefreshTimer = null;
+        let lastQr = '';
         let lastStatus = null;
         let themeIndex = 0;
 
@@ -844,6 +874,7 @@
 
         function setResult(message, kind = '') {
             hasCode = false;
+            hasQr = false;
             result.className = `result ${kind}`.trim();
             result.textContent = message;
         }
@@ -879,6 +910,62 @@
             countdown.id = 'countdown';
             result.append(kicker, heading, countdown);
             updateCountdown();
+            qrBtn.disabled = true;
+        }
+
+        function stopQrRefresh() {
+            if (qrRefreshTimer) clearInterval(qrRefreshTimer);
+            qrRefreshTimer = null;
+        }
+
+        function showQr(image) {
+            hasQr = true;
+            result.className = 'result success';
+            result.replaceChildren();
+            const kicker = document.createElement('span');
+            kicker.className = 'result-kicker';
+            kicker.textContent = 'Scan this QR from WhatsApp';
+            const imageNode = document.createElement('img');
+            imageNode.className = 'qr-image';
+            imageNode.alt = 'Temporary WhatsApp device-link QR code';
+            imageNode.src = image;
+            const help = document.createElement('span');
+            help.className = 'qr-help';
+            help.textContent = 'WhatsApp → Linked devices → Link a device, then scan this code. Keep this page open.';
+            result.append(kicker, imageNode, help);
+        }
+
+        async function refreshQr(initial = false) {
+            try {
+                const response = await fetch('/qr', { cache: 'no-store' });
+                const data = await response.json();
+                if (!response.ok || !data.success || !data.qr) {
+                    if (initial) setResult(data.error || 'QR is not ready yet. Wait a few seconds and try again.', 'error');
+                    return false;
+                }
+                if (data.qr !== lastQr || !hasQr) {
+                    lastQr = data.qr;
+                    showQr(data.qr);
+                }
+                return true;
+            } catch {
+                if (initial) setResult('Could not load the QR. Check that the bot is online and try again.', 'error');
+                return false;
+            }
+        }
+
+        async function startQrFlow() {
+            if (busy) return;
+            stopQrRefresh();
+            busy = true;
+            pairBtn.disabled = true;
+            qrBtn.disabled = true;
+            setResult('Preparing a fresh WhatsApp QR…', 'loading');
+            const ready = await refreshQr(true);
+            if (ready) qrRefreshTimer = setInterval(() => refreshQr(false), 7000);
+            busy = false;
+            if (lastStatus) setStatus(lastStatus);
+            else refreshStatus();
         }
 
         function updateCountdown() {
@@ -891,6 +978,7 @@
             if (!remaining) {
                 hasCode = false;
                 result.classList.remove('success');
+                if (lastStatus) setStatus(lastStatus);
             }
         }
 
@@ -911,8 +999,16 @@
             uptimeValue.textContent = formatUptime(Number(data.uptimeSeconds));
             if (data.nodeVersion) runtimeValue.textContent = `Node ${data.nodeVersion.split('.')[0]}`;
             if (data.version) version.textContent = data.version;
+            if (typeof data.publicPairing === 'boolean') {
+                accessValue.textContent = data.publicPairing ? 'PUBLIC' : 'OWNER ONLY';
+            }
             pairBtn.disabled = Boolean(data.connected) || busy;
-            if (data.connected && !hasCode) setResult('Bot is already connected to WhatsApp', 'success');
+            qrBtn.hidden = data.publicPairing !== true;
+            qrBtn.disabled = Boolean(data.connected) || busy || hasCode;
+            if (data.connected) {
+                stopQrRefresh();
+                if (!hasCode) setResult('Bot is already connected to WhatsApp', 'success');
+            }
             if (rawState === 'disconnected' && !hasCode) setResult('Bot is recovering for a fresh pairing', 'error');
         }
 
@@ -928,6 +1024,8 @@
                 stateValue.textContent = 'OFFLINE';
                 telemetryState.textContent = 'service unavailable';
                 pairBtn.disabled = true;
+                qrBtn.hidden = true;
+                qrBtn.disabled = true;
                 if (!hasCode) setResult('Pairing service is temporarily unavailable', 'error');
             }
         }
@@ -937,8 +1035,12 @@
             guideTrigger.setAttribute('aria-expanded', String(open));
         });
 
+        qrBtn.addEventListener('click', startQrFlow);
+
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
+            stopQrRefresh();
+            hasQr = false;
             const phone = phoneInput.value.replace(/\D/g, '');
             phoneInput.value = phone;
             if (!/^\d{10,15}$/.test(phone)) {

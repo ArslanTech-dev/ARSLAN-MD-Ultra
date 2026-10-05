@@ -96,7 +96,7 @@ startBot();
 | ⚙️ **Command Engine** | Centralized routing through the bot handlers |
 | 📡 **Live Status** | Browser console, `/status`, and `/health` endpoints |
 | ♻️ **Session Recovery** | Invalid sessions are cleared for fresh pairing |
-| 🔁 **Pairing Retry Logic** | Socket readiness delay, retry/backoff, and auth diagnostics |
+| 🔁 **Pairing Diagnostics** | One request per attempt, confirmed server acknowledgements, and actionable errors |
 | 🧠 **Centralized Config** | Public or owner-only pairing controlled by environment variables |
 | 🆓 **Open Source** | MIT licensed and ready to customize |
 
@@ -120,6 +120,10 @@ Public pairing is enabled by default. Each deployment supports **one active What
 6. Enter the code and keep the hosting process running.
 
 The account that completes the public pairing becomes the current bot owner. A second account must wait until the current session disconnects or the active pairing request expires.
+
+If WhatsApp rejects a pairing code, use **Scan QR code instead** on the pairing page. The QR is temporary and links whichever WhatsApp account scans it. The bot can only keep one account connected at a time.
+
+Baileys is temporarily pinned to `7.0.0-rc14` with a guarded post-install patch based on [upstream PR #2559](https://github.com/WhiskeySockets/Baileys/pull/2559). It waits for WhatsApp's pairing response before returning a code and reports rejections instead of saving an unconfirmed pairing. WhatsApp can still reject a particular account or limit linking; no client-side change can guarantee every account will connect. Review and remove the workaround when an official Baileys release includes the fix.
 
 To restore owner-only pairing:
 
@@ -219,7 +223,7 @@ ARSLAN-MD-Ultra/
 ├── config.js            # Bot and pairing configuration
 ├── handlers.js          # Plugin loading and message dispatch
 ├── index.js             # Baileys startup and connection lifecycle
-├── pair.js              # Pairing number validation and retry logic
+├── pair.js              # Pairing number validation and safe error reporting
 ├── server.js            # Pairing website and health endpoints
 ├── utils/               # Shared utilities and logging
 ├── package.json         # Runtime dependencies and scripts

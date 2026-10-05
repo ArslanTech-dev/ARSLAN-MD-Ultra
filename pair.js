@@ -1,10 +1,8 @@
 // pair.js – resilient WhatsApp pairing-code flow
 
-const chalk = require('chalk');
 const { fancyLog } = require('./utils/logger');
 
-const INITIAL_DELAY_MS = 1500;
-const MAX_ATTEMPTS = 3;
+const INITIAL_DELAY_MS = 500;
 
 function normalizePhoneNumber(phoneNumber) {
     const normalized = String(phoneNumber || '').replace(/\D/g, '');
@@ -20,14 +18,21 @@ function wait(ms) {
 
 function formatPairingError(error) {
     const message = String(error?.message || error || 'Unknown pairing error');
+    const statusCode = error?.output?.statusCode || error?.statusCode;
     if (/passkey|webauthn|challenge/i.test(message)) {
-        return `${message} — WhatsApp returned a passkey/WebAuthn challenge. Retry after the socket is ready or link this device from WhatsApp Linked Devices.`;
+        return `${message} — WhatsApp rejected the pairing handshake. Try the QR option, or wait before requesting a new code.`;
     }
-    if (/401|logged.?out|bad.?auth/i.test(message)) {
-        return `${message} — the saved WhatsApp session is invalid and must be paired again.`;
+    if (statusCode === 429 || /rate.?overlimit|too many requests/i.test(message)) {
+        return `${message} — WhatsApp is rate-limiting pairing attempts. Stop retrying and wait before trying again.`;
+    }
+    if (statusCode === 401 || /401|logged.?out|bad.?auth/i.test(message)) {
+        return `${message} — WhatsApp rejected this link request. If it repeats, try QR linking and check the deployment logs.`;
+    }
+    if (statusCode === 400 || /400.*bad.?request/i.test(message)) {
+        return `${message} — WhatsApp rejected the pairing request before the code was accepted. Try QR linking.`;
     }
     if (/408|timeout|timed? ?out|connection.?closed|428|515/i.test(message)) {
-        return `${message} — WhatsApp socket is not ready yet; retrying pairing after reconnect.`;
+        return `${message} — the WhatsApp connection closed during pairing. Wait for the bot to reconnect, then request one fresh code.`;
     }
     return message;
 }
@@ -41,39 +46,21 @@ async function requestPairingCode(sock, phoneNumber, options = {}) {
     const initialDelay = Number.isFinite(options.initialDelayMs)
         ? Math.max(0, options.initialDelayMs)
         : INITIAL_DELAY_MS;
-    const maxAttempts = Number.isInteger(options.maxAttempts)
-        ? Math.max(1, options.maxAttempts)
-        : MAX_ATTEMPTS;
 
     await wait(initialDelay);
-    let lastError;
+    try {
+        const code = await sock.requestPairingCode(normalizedNumber);
+        if (!code) throw new Error('WhatsApp returned an empty pairing code.');
 
-    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-        try {
-            const code = await sock.requestPairingCode(normalizedNumber);
-            if (!code) throw new Error('WhatsApp returned an empty pairing code.');
-
-            console.log(chalk.yellow('\n========== PAIRING CODE =========='));
-            console.log(chalk.green(`Code: ${code}`));
-            console.log(chalk.yellow('Enter this code on your WhatsApp phone.\n'));
-            fancyLog('SUCCESS', `Pairing code sent to ${normalizedNumber}`);
-            return code;
-        } catch (error) {
-            lastError = error;
-            const formatted = formatPairingError(error);
-            const retryable = /passkey|webauthn|challenge|401|logged.?out|bad.?auth|408|timeout|connection.?closed|428|515/i.test(formatted);
-            if (attempt >= maxAttempts || !retryable) {
-                fancyLog('ERROR', `Pairing failed: ${formatted}`);
-                throw new Error(formatted);
-            }
-
-            const backoff = attempt * 1200;
-            fancyLog('WARN', `Pairing attempt ${attempt}/${maxAttempts} needs a ready WhatsApp socket. Retrying in ${backoff}ms...`);
-            await wait(backoff);
-        }
+        fancyLog('SUCCESS', 'Pairing code generated and returned to the browser.');
+        return code;
+    } catch (error) {
+        const formatted = formatPairingError(error);
+        fancyLog('ERROR', `Pairing request failed: ${formatted}`);
+        const pairingError = new Error(formatted, { cause: error });
+        pairingError.statusCode = error?.output?.statusCode || error?.statusCode;
+        throw pairingError;
     }
-
-    throw lastError || new Error('Pairing failed without a reported error.');
 }
 
 module.exports = { normalizePhoneNumber, requestPairingCode };

@@ -8,6 +8,7 @@ const {
     default: makeWASocket,
     DisconnectReason,
     useMultiFileAuthState,
+    Browsers,
 } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const chalk = require('chalk');
@@ -33,6 +34,7 @@ let pairingCode = null;
 let pairingRequestedAt = 0;
 let pairingPhoneNumber = null;
 let pairingRequestPromise = null;
+let pairingQr = null;
 const startedAt = Date.now();
 
 async function startBot() {
@@ -44,10 +46,9 @@ async function startBot() {
 
     const { state, saveCreds } = await useMultiFileAuthState('session');
     sock = makeWASocket({
-        logger: pino({ level: 'silent' }),
-        printQRInTerminal: false,
+        logger: pino({ level: process.env.BAILEYS_LOG_LEVEL || 'warn' }),
         auth: state,
-        browser: ['Ubuntu', 'Chrome', '20.0.04'],
+        browser: Browsers.ubuntu('Chrome'),
         syncFullHistory: false,
         markOnlineOnConnect: false,
         connectTimeoutMs: 60000,
@@ -60,7 +61,8 @@ async function startBot() {
         const { connection, lastDisconnect, qr } = update;
 
         // ---------- PAIRING CODE (using pair.js) ----------
-        if (update.qr) {
+        if (qr) {
+            pairingQr = qr;
             connectionState = 'pairing';
             if (config.PAIRING_NUMBER && !config.PUBLIC_PAIRING) {
                 try {
@@ -79,8 +81,11 @@ async function startBot() {
             pairingCode = null;
             pairingPhoneNumber = null;
             pairingRequestPromise = null;
-            const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-            fancyLog('ERROR', `Connection closed. Reason: ${reason}`);
+            pairingQr = null;
+            const disconnectError = lastDisconnect?.error;
+            const reason = new Boom(disconnectError)?.output?.statusCode || 'unknown';
+            const detail = String(disconnectError?.message || '').replace(/\s+/g, ' ').slice(0, 220);
+            fancyLog('ERROR', `Connection closed. Reason: ${reason}${detail ? ` — ${detail}` : ''}`);
             if (reason === DisconnectReason.loggedOut) {
                 pairingCode = null;
                 pairingPhoneNumber = null;
@@ -103,11 +108,12 @@ async function startBot() {
             pairingCode = null;
             pairingPhoneNumber = null;
             pairingRequestPromise = null;
+            pairingQr = null;
             if (config.PUBLIC_PAIRING && sock.user?.id) {
                 const connectedId = String(sock.user.id).split(':')[0];
                 config.OWNER = [connectedId.includes('@') ? connectedId : `${connectedId}@s.whatsapp.net`];
                 global.OWNER = config.OWNER;
-                fancyLog('INFO', `Public pairing owner set to ${config.OWNER[0]}`);
+                fancyLog('INFO', 'Public pairing owner set to the newly linked account.');
             }
             fancyLog('SUCCESS', `${global.BOT_NAME} Connected!`);
 
@@ -166,6 +172,9 @@ async function createPairingCode(phoneNumber = config.PAIRING_NUMBER) {
     if (!sock) {
         throw new Error('WhatsApp connection is still starting. Try again in a few seconds.');
     }
+    if (connectionState === 'disconnected') {
+        throw new Error('WhatsApp is reconnecting. Wait until pairing is ready, then request a fresh code.');
+    }
     if (connectionState === 'connected') {
         throw new Error('This bot is already connected to WhatsApp.');
     }
@@ -189,6 +198,7 @@ async function createPairingCode(phoneNumber = config.PAIRING_NUMBER) {
 
     pairingPhoneNumber = String(phoneNumber || '').replace(/\D/g, '');
     pairingRequestedAt = now;
+    pairingQr = null;
     pairingRequestPromise = (async () => {
         const code = await requestPairingCode(sock, phoneNumber);
         if (!code) throw new Error('WhatsApp did not return a pairing code.');
@@ -216,9 +226,18 @@ function getBotStatus() {
         connected: connectionState === 'connected' && Boolean(sock?.user),
         pairingAvailable: connectionState !== 'disconnected' && Boolean(sock && !sock.user),
         publicPairing: config.PUBLIC_PAIRING,
+        qrPairingAvailable: config.PUBLIC_PAIRING && Boolean(pairingQr) && !pairingCode && !pairingRequestPromise,
         uptimeSeconds,
         nodeVersion: process.versions.node,
     };
+}
+
+function getPairingQr() {
+    if (!config.PUBLIC_PAIRING || connectionState === 'connected' || connectionState === 'disconnected') {
+        return null;
+    }
+    if (pairingCode || pairingRequestPromise) return null;
+    return pairingQr;
 }
 
 if (require.main === module) {
@@ -227,4 +246,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { createPairingCode, getBotStatus, startBot };
+module.exports = { createPairingCode, getBotStatus, getPairingQr, startBot };
