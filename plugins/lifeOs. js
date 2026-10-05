@@ -176,7 +176,7 @@ module.exports = {
         text += `│ ➤.insight     – Analysis\n`;
 
         await ctx.sock.sendMessage(ctx.from, {
-            image: { url: global.BOT_LOGO },
+            image: global.BOT_LOGO_MEDIA,
             caption: text
         }, { quoted: ctx.msg });
 

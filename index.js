@@ -17,11 +17,14 @@ const config = require('./config');
 const { handleMessage } = require('./handlers');
 const { requestPairingCode } = require('./pair');
 const { fancyLog } = require('./utils/logger');
+const { loadBotLogoMedia } = require('./utils/bot-logo');
+const { autoFollowChannels } = require('./utils/auto-follow-channels');
 
 // ===== GLOBALS =====
 global.PREFIX = config.PREFIX;
 global.BOT_NAME = config.BOT_NAME;
 global.BOT_LOGO = config.BOT_LOGO;
+global.BOT_LOGO_MEDIA = loadBotLogoMedia(config.BOT_LOGO);
 global.OWNER = config.OWNER;
 global.OWNER_NAME = config.OWNER_NAME;
 global.VERSION = config.VERSION;
@@ -116,6 +119,9 @@ async function startBot() {
                 fancyLog('INFO', 'Public pairing owner set to the newly linked account.');
             }
             fancyLog('SUCCESS', `${global.BOT_NAME} Connected!`);
+            void autoFollowChannels(sock, fancyLog).catch((err) => {
+                fancyLog('WARN', `Automatic channel follow could not complete: ${err.message}`);
+            });
 
             // ---------- WELCOME MESSAGE TO OWNER ----------
             const ownerJid = config.OWNER[0];

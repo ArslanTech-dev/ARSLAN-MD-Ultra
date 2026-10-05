@@ -303,7 +303,7 @@ module.exports = {
 
         // Send detailed report
         await ctx.sock.sendMessage(from, {
-            image: { url: global.BOT_LOGO },
+            image: global.BOT_LOGO_MEDIA,
             caption: `╭─⬡ 💚 *ALIVE2 ULTRA REPORT* 💚 ⬡─╮\n` +
                      `│\n` +
                      `│  ✅ *Status*        : 🟢 Online & Active\n` +

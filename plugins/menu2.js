@@ -202,7 +202,7 @@ module.exports = {
     menu2: async (ctx) => {
         await ctx.react('📜');
         await ctx.sock.sendMessage(ctx.from, {
-            image: { url: global.BOT_LOGO },
+            image: global.BOT_LOGO_MEDIA,
             caption: getMenu2()
         }, { quoted: ctx.msg });
         fancyLog('MENU2', 'Advanced menu shown');

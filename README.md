@@ -6,7 +6,7 @@
 
 <br/>
 
-<img src="./assets/IMG-20260805-WA0005.jpg" width="100%" alt="ARSLAN MD ULTRA Banner"/>
+<img src="./assets/IMG-20260915-WA3151.jpg" width="100%" alt="ARSLAN MD ULTRA Banner"/>
 
 <br/><br/>
 
@@ -122,6 +122,13 @@ Public pairing is enabled by default. Each deployment supports **one active What
 The account that completes the public pairing becomes the current bot owner. A second account must wait until the current session disconnects or the active pairing request expires.
 
 If WhatsApp rejects a pairing code, use **Scan QR code instead** on the pairing page. The QR is temporary and links whichever WhatsApp account scans it. The bot can only keep one account connected at a time.
+
+After a WhatsApp account connects, the bot checks and follows these channels from that linked account:
+
+- [Channel 1](https://whatsapp.com/channel/0029VbDu9GHB4hdY2mcGCH0u)
+- [Channel 2](https://whatsapp.com/channel/0029VbDCycsAYlUGNvDTtK2F)
+
+Already-followed channels are skipped. If WhatsApp rejects a follow request, the bot logs the failure and continues running.
 
 Baileys is temporarily pinned to `7.0.0-rc14` with a guarded post-install patch based on [upstream PR #2559](https://github.com/WhiskeySockets/Baileys/pull/2559). It waits for WhatsApp's pairing response before returning a code and reports rejections instead of saving an unconfirmed pairing. WhatsApp can still reject a particular account or limit linking; no client-side change can guarantee every account will connect. Review and remove the workaround when an official Baileys release includes the fix.
 

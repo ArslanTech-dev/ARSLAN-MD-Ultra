@@ -445,7 +445,7 @@ module.exports = {
         await ctx.sock.sendMessage(
             ctx.from,
             {
-                image: { url: global.BOT_LOGO },
+                image: global.BOT_LOGO_MEDIA,
                 caption: getMenu()
             },
             { quoted: ctx.msg }
@@ -457,7 +457,7 @@ module.exports = {
         await ctx.sock.sendMessage(
             ctx.from,
             {
-                image: { url: global.BOT_LOGO },
+                image: global.BOT_LOGO_MEDIA,
                 caption: getMenu()
             },
             { quoted: ctx.msg }
@@ -485,7 +485,7 @@ module.exports = {
         await ctx.sock.sendMessage(
             ctx.from,
             {
-                image: { url: global.BOT_LOGO },
+                image: global.BOT_LOGO_MEDIA,
                 caption: `╭─⬡ *BOT ALIVE* ⬡─╮\n│\n│ ✅ Status: Online\n│ 🤖 Name: ${global.BOT_NAME}\n│ ⏱ Uptime: ${getUptime()}\n│ 👑 Owner: ${global.OWNER_NAME}\n│\n╰───────────────────╯`
             },
             { quoted: ctx.msg }

@@ -4,7 +4,7 @@ const publicPairing = String(process.env.PUBLIC_PAIRING ?? 'true').toLowerCase()
 module.exports = {
     PREFIX: '.',
     BOT_NAME: 'ARSLAN MD ULTRA',
-    BOT_LOGO: 'https://files.catbox.moe/0w1hu5.jpg',
+    BOT_LOGO: process.env.BOT_LOGO || 'assets/IMG-20260805-WA0005.jpg',
     OWNER: pairingNumber ? [`${pairingNumber}@s.whatsapp.net`] : [],
     OWNER_NAME: 'ARSLAN TECH\'S',
     VERSION: '4.0.0',
